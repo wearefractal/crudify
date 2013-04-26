@@ -8,7 +8,7 @@
 </tr>
 <tr>
 <td>Description</td>
-<td>NOTHING HERE YET</td>
+<td>DESCRIPTIONHERE</td>
 </tr>
 <tr>
 <td>Node Version</td>
@@ -21,10 +21,6 @@
 ```coffee-script
 NOTHING HERE YET
 ```
-
-## Examples
-
-You can view more examples in the [example folder.](https://github.com/wearefractal/APPNAME/tree/master/examples)
 
 ## LICENSE
 

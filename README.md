@@ -1,14 +1,14 @@
-![status](https://secure.travis-ci.org/wearefractal/APPNAME.png?branch=master)
+![status](https://secure.travis-ci.org/wearefractal/crudify.png?branch=master)
 
 ## Information
 
 <table>
 <tr> 
-<td>Package</td><td>APPNAME</td>
+<td>Package</td><td>crudify</td>
 </tr>
 <tr>
 <td>Description</td>
-<td>DESCRIPTIONHERE</td>
+<td>Mongoose CRUD generator</td>
 </tr>
 <tr>
 <td>Node Version</td>
@@ -19,7 +19,34 @@
 ## Usage
 
 ```coffee-script
-NOTHING HERE YET
+db = mongoose.createConnection()
+app = express()
+
+# Set up DB
+UserModel = new Schema
+  name:
+    type: String
+    required: true
+
+  bestFriend:
+    type: Schema.Types.ObjectId
+    ref: 'User'
+
+  friends: [
+    type: Schema.Types.ObjectId
+    ref: 'User'
+  ]
+
+db.model 'User', UserModel
+
+# Set up crudify
+crud = crudify db
+crud.expose 'User'
+
+# Plug it into express
+app.use crud.middleware()
+
+app.listen 8080
 ```
 
 ## LICENSE

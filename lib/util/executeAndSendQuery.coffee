@@ -9,7 +9,7 @@ module.exports = (query, res) ->
     return
 
   query.exec (err, data) ->
-    return sendError res, err if err?
+    return sendError res, err if err?z
     sendResult res, query.flags.format, data
     return
 

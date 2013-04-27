@@ -28,6 +28,7 @@ module.exports = (model) ->
     meta:
       type: "single"
       models: [model]
+      primaryKey: primaryKey
     methods: ["get","put","patch","delete"]
     path: "/#{collectionName}/:#{primaryKey}"
 
@@ -50,6 +51,7 @@ module.exports = (model) ->
         type: "single-instance-method"
         models: [model]
         handler: fn
+        primaryKey: primaryKey
       methods: ["get","post"]
       path: "/#{collectionName}/:#{primaryKey}/#{name}"
 
@@ -70,6 +72,7 @@ module.exports = (model) ->
           type: "single-with-populate"
           models: [model, actualModel]
           field: fieldName
+          primaryKey: primaryKey
         methods: ["get","put","delete"]
         path: "/#{collectionName}/:#{primaryKey}/#{fieldName}"
       continue
@@ -82,6 +85,7 @@ module.exports = (model) ->
           type: "single-with-populate-many"
           models: [model, actualModel]
           field: fieldName
+          primaryKey: primaryKey
         methods: ["get","post"]
         path: "/#{collectionName}/:#{primaryKey}/#{fieldName}"
 
@@ -92,6 +96,8 @@ module.exports = (model) ->
           type: "single-with-populate-many"
           models: [model, actualModel]
           field: fieldName
+          primaryKey: primaryKey
+          secondaryKey: secondaryKey
         methods: ["get","delete"]
         path: "/#{collectionName}/:#{primaryKey}/#{fieldName}/:#{secondaryKey}"
 

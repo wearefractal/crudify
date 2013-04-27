@@ -33,7 +33,15 @@ beforeEach (done) ->
     User.create mike, (err, doc) ->
       return done err if err?
       MikeModel = doc
-      done()
+
+      TomModel.set 'bestFriend', MikeModel
+      MikeModel.set 'bestFriend', TomModel
+
+      TomModel.save (err) ->
+        return done err if err?
+        MikeModel.save (err) ->
+          return done err if err?
+          done()
 
 afterEach db.wipe
 
@@ -110,4 +118,71 @@ describe 'crudify integration', ->
         Array.isArray(body).should.equal true
         body.length.should.equal 2
         (body[0].score >= body[1].score).should.equal true
+        done()
+
+    it 'should return all users with populate', (done) ->
+      opt =
+        method: "GET"
+        uri: "http://localhost:#{PORT}/users?populate=bestFriend"
+        
+      request opt, (err, res, body) ->
+        should.not.exist err
+        res.statusCode.should.equal 200
+        should.exist body
+        body = JSON.parse body
+        Array.isArray(body).should.equal true
+        body.length.should.equal 2
+        should.exist body[0].bestFriend
+        should.exist body[0].bestFriend.score
+        should.exist body[1].bestFriend
+        should.exist body[1].bestFriend.score
+        done()
+
+  describe 'GET /users/:id', ->
+    it 'should return user', (done) ->
+      opt =
+        method: "GET"
+        uri: "http://localhost:#{PORT}/users/#{TomModel._id}"
+        
+      request opt, (err, res, body) ->
+        should.not.exist err
+        res.statusCode.should.equal 200
+        should.exist body
+        body = JSON.parse body
+        should.exist body.name
+        body.name.should.equal TomModel.name
+        body.score.should.equal TomModel.score
+        body.bestFriend.should.equal String MikeModel._id
+        done()
+
+    it 'should return user with populate', (done) ->
+      opt =
+        method: "GET"
+        uri: "http://localhost:#{PORT}/users/#{TomModel._id}?populate=bestFriend"
+        
+      request opt, (err, res, body) ->
+        should.not.exist err
+        res.statusCode.should.equal 200
+        should.exist body
+        body = JSON.parse body
+        should.exist body.name
+        body.name.should.equal TomModel.name
+        body.score.should.equal TomModel.score
+        body.bestFriend.name.should.equal MikeModel.name
+        body.bestFriend.score.should.equal MikeModel.score
+        done()
+
+    it 'should return users with populated friend', (done) ->
+      opt =
+        method: "GET"
+        uri: "http://localhost:#{PORT}/users/#{TomModel._id}/bestFriend"
+        
+      request opt, (err, res, body) ->
+        should.not.exist err
+        res.statusCode.should.equal 200
+        should.exist body
+        body = JSON.parse body
+        should.exist body.name
+        body.name.should.equal MikeModel.name
+        body.score.should.equal MikeModel.score
         done()

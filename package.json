@@ -9,7 +9,8 @@
    
    "dependencies":{
       "coffee-script":"*",
-      "require-directory":"*"
+      "require-directory":"*",
+      "async":"*"
    },
    "devDependencies":{
       "mocha":"*",

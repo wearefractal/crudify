@@ -44,7 +44,7 @@ crud = crudify db
 crud.expose 'User'
 
 # Plug it into express
-app.use crud.middleware()
+crud.hook app
 
 app.listen 8080
 ```

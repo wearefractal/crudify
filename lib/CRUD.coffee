@@ -1,4 +1,6 @@
 Model = require "./Model"
+createHandler = require "./util/createHandler"
+async = require 'async'
 
 class CRUD
   constructor: (@db) ->
@@ -25,11 +27,23 @@ class CRUD
     throw new Error "modelName argument needs to be a string" unless typeof modelName is 'string'
     return @_models[modelName]
 
-  use: (fn) -> @_middleware.push fn
+  use: (fn) ->
+    @_middleware.push fn
+    return @
     
-  middleware: ->
-    fn = (req, res, next) ->
-      next()
-    return fn
+  runMiddleware: (a..., cb) ->
+    return cb() unless @_middleware.length isnt 0
+    run = (middle, done) => middle a..., done
+    async.forEachSeries @_middleware, run, cb
+    return
+
+  hook: (app) ->
+    for name, model in @_models
+      for route in model.routes
+        handler = createHandler route
+        for method, fn of handler
+          app[method] route.path, @runMiddleware, model.runMiddleware, fn
+    return @
+
 
 module.exports = CRUD

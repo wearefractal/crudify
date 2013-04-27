@@ -27,16 +27,7 @@ describe 'crudify', ->
     it 'should produce a CRUD instance when passed a db', (done) ->
       crud = crudify db
       should.exist crud
-      should.exist crud.middleware
       should.exist crud.expose
-      done()
-
-  describe 'middleware()', ->
-    it 'should produce a connect-style middleware function', (done) ->
-      crud = crudify db
-      middle = crud.middleware()
-      should.exist middle
-      middle.length.should.equal 3
       done()
 
   describe 'expose()', ->

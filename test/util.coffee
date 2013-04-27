@@ -55,7 +55,7 @@ describe 'crudify utils', ->
       done()
 
   describe 'createHandler()', ->
-    it 'should return a valid handler for collection', (done) ->
+    it 'should return valid handlers for collection', (done) ->
       route =
         meta:
           type: "collection"
@@ -64,7 +64,23 @@ describe 'crudify utils', ->
         path: "/users"
 
       handler = util.createHandler route
-      should.exist handler
-      handler.length.should.equal 3
-      
+      should.exist handler.get
+      should.exist handler.post
+      handler.get.length.should.equal 3
+      handler.post.length.should.equal 3
       done()
+
+    it 'should not return excluded handlers for collection', (done) ->
+      route =
+        meta:
+          type: "collection"
+          models: [User]
+        methods: ["get"]
+        path: "/users"
+
+      handler = util.createHandler route
+      should.exist handler.get
+      should.not.exist handler.post
+      handler.get.length.should.equal 3
+      done()
+

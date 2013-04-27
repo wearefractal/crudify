@@ -12,3 +12,5 @@ module.exports = (query, res, cb) ->
       return
     sendResult res, query.flags.format, data
     cb()
+
+  return query

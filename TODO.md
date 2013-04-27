@@ -1,7 +1,3 @@
-More in-code documentation
-
-Support static and instance method routes via JSON POST
-
 # Querystring
 
 Support populate+querystring where arguments

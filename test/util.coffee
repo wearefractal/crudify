@@ -7,8 +7,9 @@ User = db.model 'User'
 
 describe 'crudify utils', ->
   describe 'getPopulatesFromModel()', ->
-    it 'should add a model and its routes', (done) ->
+    it 'should return populated values', (done) ->
       toPopulate = util.getPopulatesFromModel User
+      should.exist toPopulate
       expected = [
         name: "bestFriend"
         plural: false
@@ -23,6 +24,20 @@ describe 'crudify utils', ->
       toPopulate.should.eql expected
       done()
 
+  describe 'getStaticsFromModel()', ->
+    it 'should return all static methods', (done) ->
+      statics = util.getStaticsFromModel User
+      should.exist statics
+      should.exist statics.search
+      done()
+
+  describe 'getInstanceMethodsFromModel()', ->
+    it 'should return all static methods', (done) ->
+      methods = util.getInstanceMethodsFromModel User
+      should.exist methods
+      should.exist methods.findWithSameName
+      done()
+
   describe 'hasField()', ->
     it 'should return true on valid field', (done) ->
       util.hasField(User, 'name').should.equal true
@@ -35,5 +50,6 @@ describe 'crudify utils', ->
   describe 'getRoutesFromModel()', ->
     it 'should return the right routes', (done) ->
       routes = util.getRoutesFromModel User
+      # TODO: finish this
       console.log routes
       done()

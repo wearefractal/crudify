@@ -1,0 +1,1 @@
+module.exports = (model) -> model.schema.methods or {}

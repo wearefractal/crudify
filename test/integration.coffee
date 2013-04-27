@@ -12,7 +12,7 @@ crud.expose 'User'
 PORT = process.env.PORT or 9001
 
 app = express()
-app.use express.bodyParser()
+app.use express.json()
 crud.hook app
 app.listen PORT
 
@@ -204,21 +204,6 @@ describe 'crudify integration', ->
         body.bestFriend.score.should.equal MikeModel.score
         done()
 
-    it 'should return populated friend', (done) ->
-      opt =
-        method: "GET"
-        json: true
-        uri: "http://localhost:#{PORT}/users/#{TomModel._id}/bestFriend"
-        
-      request opt, (err, res, body) ->
-        should.not.exist err
-        res.statusCode.should.equal 200
-        should.exist body
-        should.exist body.name
-        body.name.should.equal MikeModel.name
-        body.score.should.equal MikeModel.score
-        done()
-
   describe 'PATCH /users/:id', ->
     it 'should update user', (done) ->
       opt =
@@ -267,4 +252,38 @@ describe 'crudify integration', ->
         should.exist body.name
         body.name.should.equal TomModel.name
         body.score.should.equal TomModel.score
+        done()
+
+  describe 'GET /users/:id/bestFriend', ->
+    it 'should return populated friend', (done) ->
+      opt =
+        method: "GET"
+        json: true
+        uri: "http://localhost:#{PORT}/users/#{TomModel._id}/bestFriend"
+        
+      request opt, (err, res, body) ->
+        should.not.exist err
+        res.statusCode.should.equal 200
+        should.exist body
+        should.exist body.name
+        body.name.should.equal MikeModel.name
+        body.score.should.equal MikeModel.score
+        done()
+
+  describe 'PUT /users/:id/bestFriend', ->
+    it 'should modify the dbref', (done) ->
+      opt =
+        method: "PUT"
+        body: String(MikeModel._id)
+        uri: "http://localhost:#{PORT}/users/#{TomModel._id}/bestFriend"
+      
+      request opt, (err, res, body) ->
+        console.log body
+        should.not.exist err
+        res.statusCode.should.equal 200
+        should.exist body
+        should.exist body.name
+        body.name.should.equal TomModel.name
+        body.score.should.equal TomModel.score
+        body.bestFriend.should.equal String MikeModel._id
         done()

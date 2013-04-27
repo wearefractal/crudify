@@ -154,6 +154,22 @@ describe 'crudify integration', ->
         should.exist body[1].bestFriend.score
         done()
 
+  describe 'POST /users', ->
+    it 'should create a user', (done) ->
+      opt =
+        method: "POST"
+        json:
+          name: "New Guy"
+        uri: "http://localhost:#{PORT}/users"
+        
+      request opt, (err, res, body) ->
+        should.not.exist err
+        res.statusCode.should.equal 200
+        should.exist body
+        body.name.should.equal "New Guy"
+        body.score.should.equal 0
+        done()
+
   describe 'GET /users/:id', ->
     it 'should return user', (done) ->
       opt =
@@ -188,7 +204,7 @@ describe 'crudify integration', ->
         body.bestFriend.score.should.equal MikeModel.score
         done()
 
-    it 'should return users with populated friend', (done) ->
+    it 'should return populated friend', (done) ->
       opt =
         method: "GET"
         json: true

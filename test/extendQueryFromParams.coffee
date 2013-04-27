@@ -28,14 +28,14 @@ describe 'extendQueryFromParams()', ->
       query.flags.stream.should.equal true
 
       params2 =
-        format: 'xml'
+        stream: true
 
       query = util.extendQueryFromParams query, params2
       should.exist query.flags
       should.exist query.flags.stream
       query.flags.stream.should.equal true
-      should.exist query.flags.format
-      query.flags.format.should.equal 'xml'
+      should.exist query.flags.stream
+      query.flags.stream.should.equal true
       done()
 
   describe 'skip', ->
@@ -224,27 +224,6 @@ describe 'extendQueryFromParams()', ->
       should.exist query._conditions
       should.not.exist query._conditions.blah
       should.not.exist query._conditions.zzz
-      done()
-
-  describe 'format', ->
-    it 'should work with valid format', (done) ->
-      query = User.find()
-      query.where('name').in(["Tom","Rob"])
-      params =
-        format: "xml"
-
-      query = util.extendQueryFromParams query, params
-      query.flags.format.should.equal "xml"
-      done()
-
-    it 'should default to json with invalid format', (done) ->
-      query = User.find()
-      query.where('name').in(["Tom","Rob"])
-      params =
-        format: "blah"
-
-      query = util.extendQueryFromParams query, params
-      query.flags.format.should.equal "json"
       done()
 
   describe 'misc', ->

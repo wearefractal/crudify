@@ -51,5 +51,20 @@ describe 'crudify utils', ->
     it 'should return the right routes', (done) ->
       routes = util.getRoutesFromModel User
       # TODO: finish this
-      console.log routes
+      #console.log routes
+      done()
+
+  describe 'createHandler()', ->
+    it 'should return a valid handler for collection', (done) ->
+      route =
+        meta:
+          type: "collection"
+          models: [User]
+        methods: ["get","post"]
+        path: "/users"
+
+      handler = util.createHandler route
+      should.exist handler
+      handler.length.should.equal 3
+      
       done()

@@ -13,8 +13,9 @@ module.exports = (model) ->
   # GET lists all items in the collection
   # POST creates a new item in the collection
   routes.push
-    type: "collection"
-    models: [model]
+    meta:
+      type: "collection"
+      models: [model]
     methods: ["get","post"]
     path: "/#{collectionName}"
 
@@ -24,8 +25,9 @@ module.exports = (model) ->
   # PATCH modifies the object in the collection
   # DELETe removes the object from the collection
   routes.push
-    type: "single"
-    models: [model]
+    meta:
+      type: "single"
+      models: [model]
     methods: ["get","put","patch","delete"]
     path: "/#{collectionName}/:#{primaryKey}"
 
@@ -33,8 +35,10 @@ module.exports = (model) ->
   statics = getStaticsFromModel model
   for name, fn of statics
     routes.push
-      type: "collection-static-method"
-      models: [model]
+      meta:
+        type: "collection-static-method"
+        models: [model]
+        handler: fn
       methods: ["get"]
       path: "/#{collectionName}/#{name}"
 
@@ -42,8 +46,10 @@ module.exports = (model) ->
   instMethods = getInstanceMethodsFromModel model
   for name, fn of instMethods
     routes.push
-      type: "single-instance-method"
-      models: [model]
+      meta:
+        type: "single-instance-method"
+        models: [model]
+        handler: fn
       methods: ["get"]
       path: "/#{collectionName}/:#{primaryKey}/#{name}"
 
@@ -53,33 +59,39 @@ module.exports = (model) ->
     fieldName = path.name
     actualModel = model.db.model path.modelName
     nestedModelName = actualModel.modelName
+    secondaryKey = "#{fieldName}#{nestedModelName}Id"
 
     if path.single
       # GET returns the populated item
       # PUT replaces the DBRef with another
       # DELETE removes the DBRef
       routes.push
-        type: "single-with-populate"
-        models: [model, actualModel]
+        meta:
+          type: "single-with-populate"
+          models: [model, actualModel]
+          field: fieldName
         methods: ["get","put","delete"]
         path: "/#{collectionName}/:#{primaryKey}/#{fieldName}"
       continue
 
     if path.plural
-      secondaryKey = "#{fieldName}#{nestedModelName}Id"
       # GET returns list of DBRefs
       # POST adds a new DBRef to the list
       routes.push
-        type: "single-with-populate-many"
-        models: [model, actualModel]
+        meta:
+          type: "single-with-populate-many"
+          models: [model, actualModel]
+          field: fieldName
         methods: ["get","post"]
         path: "/#{collectionName}/:#{primaryKey}/#{fieldName}"
 
       # GET returns the full model populated from the list of DBRefs
       # DELETE will delete the DBRef from the list
       routes.push
-        type: "single-with-populate-many"
-        models: [model, actualModel]
+        meta:
+          type: "single-with-populate-many"
+          models: [model, actualModel]
+          field: fieldName
         methods: ["get","delete"]
         path: "/#{collectionName}/:#{primaryKey}/#{fieldName}/:#{secondaryKey}"
 

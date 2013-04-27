@@ -1,6 +1,7 @@
 Model = require "./Model"
 createHandler = require "./util/createHandler"
 async = require 'async'
+{join} = require 'path'
 
 class CRUD
   constructor: (@db) ->
@@ -46,7 +47,7 @@ class CRUD
       for route in model.routes
         handler = createHandler route
         for method, fn of handler
-          p = (if path then path+route.path else route.path)
+          p = (if path? then join(path,route.path) else route.path)
           app[method] p, @runMiddleware, model.runMiddleware, fn
     return @
 

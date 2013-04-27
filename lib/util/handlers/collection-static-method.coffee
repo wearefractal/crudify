@@ -3,17 +3,17 @@ sendResult = require '../sendResult'
 
 module.exports = (route) ->
   [Model] = route.meta.models
-  staticMethod = route.meta.handler
+  handlerName = route.meta.handlerName
   out = {}
   
   out.get = (req, res, next) ->
-    staticMethod req.query, (err, data) ->
+    Model[handlerName] req.query, (err, data) ->
       return sendError res, err if err?
       sendResult res, data
 
   out.post = (req, res, next) ->
     return sendError res, new Error("Invalid body") unless typeof req.body is 'object'
-    staticMethod req.body, (err, data) ->
+    Model[handlerName] req.body, (err, data) ->
       return sendError res, err if err?
       sendResult res, data
 

@@ -10,12 +10,14 @@
    "dependencies":{
       "coffee-script":"*",
       "require-directory":"*",
-      "async":"*"
+      "async":"*",
+      "JSONStream":"*"
    },
    "devDependencies":{
       "mocha":"*",
       "should":"*",
-      "mongoose":"*"
+      "mongoose":"*",
+      "request":"*"
    },
    "scripts":{
       "test":"mocha --compilers coffee:coffee-script"

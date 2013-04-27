@@ -1,6 +1,6 @@
 # Querystring
 
-Support populate+querystring where arguments
+Support nested populate querystring params
 
 Support streaming document responses
 

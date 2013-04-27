@@ -1,7 +1,16 @@
+requireDir = require 'require-directory'
+{join} = require 'path'
+
 CRUD = require './CRUD'
+Model = require './Model'
 
-mod = (a...) -> new CRUD a...
+mod = (db) -> new CRUD db
 
-mod.scanModelTree = require './scanModelTree'
+# Expose for extending
+mod.CRUD = CRUD
+mod.Model = Model
+
+# Expose for testing
+mod.util = requireDir module, join __dirname, './util'
 
 module.exports = mod

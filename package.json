@@ -9,11 +9,12 @@
    
    "dependencies":{
       "coffee-script":"*",
-      "mongoose":"*"
+      "require-directory":"*"
    },
    "devDependencies":{
       "mocha":"*",
-      "should":"*"
+      "should":"*",
+      "mongoose":"*"
    },
    "scripts":{
       "test":"mocha --compilers coffee:coffee-script"

@@ -18,6 +18,7 @@ module.exports = (route) ->
       query = extendQueryFromParams query, req.query
       executeAndSendQuery query, res
 
+  ###
   out.put = (req, res, next) ->
     return sendError res, new Error("Invalid body") unless typeof req.body is 'string'
     singleId = req.params[route.meta.primaryKey]
@@ -36,6 +37,7 @@ module.exports = (route) ->
     query = Model.findByIdAndUpdate singleId, updates
     query = extendQueryFromParams query, req.query
     executeAndSendQuery query, res
-
+  ###
+  
   delete out[k] for k,v of out when !(k in route.methods) # adhere to given limits
   return out

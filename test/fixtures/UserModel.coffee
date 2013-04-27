@@ -18,7 +18,7 @@ UserModel = new Schema
     ref: 'User'
   ]
 
-UserModel.statics.search = (opt, cb) -> cb null, []
-UserModel.methods.findWithSameName = (opt, cb) ->  cb null, []
+UserModel.statics.search = (opt, cb) -> cb null, {query: opt.q}
+UserModel.methods.findWithSameName = (opt, cb) ->  cb null, {name: @name, query: opt.q}
 
 module.exports = UserModel

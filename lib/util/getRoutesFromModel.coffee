@@ -19,6 +19,18 @@ module.exports = (model) ->
     methods: ["get","post"]
     path: "/#{collectionName}"
 
+  # static methods
+  statics = getStaticsFromModel model
+  for name, fn of statics
+    routes.push
+      meta:
+        type: "collection-static-method"
+        models: [model]
+        handlerName: name
+        handler: fn
+      methods: ["get","post"]
+      path: "/#{collectionName}/#{name}"
+      
   # specific item
   # GET returns the object from the collection
   # PUT replaces the object in the collection
@@ -32,17 +44,6 @@ module.exports = (model) ->
     methods: ["get","put","patch","delete"]
     path: "/#{collectionName}/:#{primaryKey}"
 
-  # static methods
-  statics = getStaticsFromModel model
-  for name, fn of statics
-    routes.push
-      meta:
-        type: "collection-static-method"
-        models: [model]
-        handler: fn
-      methods: ["get","post"]
-      path: "/#{collectionName}/#{name}"
-
   # instance methods
   instMethods = getInstanceMethodsFromModel model
   for name, fn of instMethods
@@ -50,6 +51,7 @@ module.exports = (model) ->
       meta:
         type: "single-instance-method"
         models: [model]
+        handlerName: name
         handler: fn
         primaryKey: primaryKey
       methods: ["get","post"]

@@ -48,6 +48,7 @@ afterEach db.wipe
 
 describe 'crudify integration', ->
 
+  # collection
   describe 'GET /users', ->
     it 'should return all users', (done) ->
       opt =
@@ -170,6 +171,39 @@ describe 'crudify integration', ->
         body.score.should.equal 0
         done()
 
+  # static methods
+  describe 'GET /users/search', ->
+    it 'should call the static method', (done) ->
+      opt =
+        method: "GET"
+        json: true
+        uri: "http://localhost:#{PORT}/users/search?q=test"
+        
+      request opt, (err, res, body) ->
+        should.not.exist err
+        res.statusCode.should.equal 200
+        should.exist body
+        should.exist body.query
+        body.query.should.eql 'test'
+        done()
+
+  describe 'POST /users/search', ->
+    it 'should call the static method', (done) ->
+      opt =
+        method: "POST"
+        json:
+          q: "test"
+        uri: "http://localhost:#{PORT}/users/search"
+        
+      request opt, (err, res, body) ->
+        should.not.exist err
+        res.statusCode.should.equal 200
+        should.exist body
+        should.exist body.query
+        body.query.should.eql 'test'
+        done()
+
+  # single item
   describe 'GET /users/:id', ->
     it 'should return user', (done) ->
       opt =
@@ -289,3 +323,38 @@ describe 'crudify integration', ->
         body.bestFriend.should.equal String MikeModel._id
         done()
   ###
+  
+  describe 'GET /users/:id/findWithSameName', ->
+    it 'should return user', (done) ->
+      opt =
+        method: "GET"
+        json: true
+        uri: "http://localhost:#{PORT}/users/#{TomModel._id}/findWithSameName?q=test"
+        
+      request opt, (err, res, body) ->
+        should.not.exist err
+        res.statusCode.should.equal 200
+        should.exist body
+        should.exist body.name
+        should.exist body.query
+        body.name.should.equal TomModel.name
+        body.query.should.equal 'test'
+        done()
+
+  describe 'POST /users/:id/findWithSameName', ->
+    it 'should return user', (done) ->
+      opt =
+        method: "POST"
+        json:
+          q: "test"
+        uri: "http://localhost:#{PORT}/users/#{TomModel._id}/findWithSameName"
+        
+      request opt, (err, res, body) ->
+        should.not.exist err
+        res.statusCode.should.equal 200
+        should.exist body
+        should.exist body.name
+        should.exist body.query
+        body.name.should.equal TomModel.name
+        body.query.should.equal 'test'
+        done()

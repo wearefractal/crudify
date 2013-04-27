@@ -12,6 +12,7 @@ module.exports = (route) ->
       sendResult res, data
 
   out.post = (req, res, next) ->
+    return sendError res, new Error("Invalid body") unless typeof req.body is 'object'
     staticMethod req.body, (err, data) ->
       return sendError res, err if err?
       sendResult res, data

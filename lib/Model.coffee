@@ -13,7 +13,7 @@ class Model
     @_middleware.push fn
     return @
     
-  runMiddleware: (a..., cb) ->
+  runMiddleware: (a..., cb) =>
     return cb() unless @_middleware.length isnt 0
     run = (middle, done) => middle a..., done
     async.forEachSeries @_middleware, run, cb

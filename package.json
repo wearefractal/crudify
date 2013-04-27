@@ -17,7 +17,8 @@
       "mocha":"*",
       "should":"*",
       "mongoose":"*",
-      "request":"*"
+      "request":"*",
+      "express":"*"
    },
    "scripts":{
       "test":"mocha --compilers coffee:coffee-script"

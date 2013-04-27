@@ -9,8 +9,7 @@ module.exports = (route) ->
     singleId = req.params[route.meta.primaryKey]
     query = Model.findById singleId
     query = extendQueryFromParams query, req.query
-    # TODO: call middleware
-    executeAndSendQuery query, res, next
+    executeAndSendQuery query, res
 
   # TODO: actually make a put
   out.put = out.patch = (req, res, next) ->
@@ -18,15 +17,13 @@ module.exports = (route) ->
     singleId = req.params[route.meta.primaryKey]
     query = Model.findByIdAndUpdate singleId, $set: req.body
     query = extendQueryFromParams query, req.query
-    # TODO: call middleware
-    executeAndSendQuery query, res, next
+    executeAndSendQuery query, res
 
   out.delete = (req, res, next) ->
     singleId = req.params[route.meta.primaryKey]
     query = Model.findByIdAndRemove singleId
     query = extendQueryFromParams query, req.query
-    # TODO: call middleware
-    executeAndSendQuery query, res, next
+    executeAndSendQuery query, res
 
   delete out[k] for k,v of out when !(k in route.methods) # adhere to given limits
   return out

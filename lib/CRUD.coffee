@@ -31,19 +31,18 @@ class CRUD
     @_middleware.push fn
     return @
     
-  runMiddleware: (a..., cb) ->
+  runMiddleware: (a..., cb) =>
     return cb() unless @_middleware.length isnt 0
     run = (middle, done) => middle a..., done
     async.forEachSeries @_middleware, run, cb
     return
 
   hook: (app) ->
-    for name, model in @_models
+    for name, model of @_models
       for route in model.routes
         handler = createHandler route
         for method, fn of handler
           app[method] route.path, @runMiddleware, model.runMiddleware, fn
     return @
-
 
 module.exports = CRUD

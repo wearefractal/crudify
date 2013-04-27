@@ -2,19 +2,15 @@ sendError = require './sendError'
 sendResult = require './sendResult'
 sendResultStream = require './sendResultStream'
 
-module.exports = (query, res, cb) ->
+module.exports = (query, res) ->
   if query.flags.stream
     stream = query.stream()
     sendResultStream res, query.flags.format, stream
-    cb()
     return
 
   query.exec (err, data) ->
-    if err?
-      sendError res, err
-      cb err
-      return
+    return sendError res, err if err?
     sendResult res, query.flags.format, data
-    cb()
+    return
 
   return query

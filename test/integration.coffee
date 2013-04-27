@@ -287,7 +287,8 @@ describe 'crudify integration', ->
         body.name.should.equal TomModel.name
         body.score.should.equal TomModel.score
         done()
-
+        
+  ###
   describe 'GET /users/:id/bestFriend', ->
     it 'should return populated friend', (done) ->
       opt =
@@ -304,7 +305,6 @@ describe 'crudify integration', ->
         body.score.should.equal MikeModel.score
         done()
 
-  ###
   describe 'PUT /users/:id/bestFriend', ->
     it 'should modify the dbref', (done) ->
       opt =

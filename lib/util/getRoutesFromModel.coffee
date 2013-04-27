@@ -58,6 +58,7 @@ module.exports = (model) ->
       path: "/#{collectionName}/:#{primaryKey}/#{name}"
 
   # sub-items
+  ###
   toPopulate = getPopulatesFromModel model
   for path in toPopulate
     fieldName = path.name
@@ -102,5 +103,5 @@ module.exports = (model) ->
           secondaryKey: secondaryKey
         methods: ["get","delete"]
         path: "/#{collectionName}/:#{primaryKey}/#{fieldName}/:#{secondaryKey}"
-
+  ###
   return routes

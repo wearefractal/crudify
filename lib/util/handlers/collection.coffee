@@ -1,7 +1,4 @@
 extendQueryFromParams = require '../extendQueryFromParams'
-sendError = require '../sendError'
-sendResult = require '../sendResult'
-sendResultStream = require '../sendResultStream'
 executeAndSendQuery = require '../executeAndSendQuery'
 
 module.exports = (route) ->

@@ -39,7 +39,7 @@ module.exports = (model) ->
         type: "collection-static-method"
         models: [model]
         handler: fn
-      methods: ["get"]
+      methods: ["get","post"]
       path: "/#{collectionName}/#{name}"
 
   # instance methods
@@ -50,7 +50,7 @@ module.exports = (model) ->
         type: "single-instance-method"
         models: [model]
         handler: fn
-      methods: ["get"]
+      methods: ["get","post"]
       path: "/#{collectionName}/:#{primaryKey}/#{name}"
 
   # sub-items

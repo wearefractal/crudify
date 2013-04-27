@@ -1,3 +1,7 @@
+sendError = require './sendError'
+sendResult = require './sendResult'
+sendResultStream = require './sendResultStream'
+
 module.exports = (query, res, cb) ->
   if query.flags.stream
     stream = query.stream()

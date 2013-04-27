@@ -77,6 +77,21 @@ describe 'crudify integration', ->
         body.length.should.equal 1
         done()
 
+    it 'should return all users with mike as a friend', (done) ->
+      opt =
+        method: "GET"
+        json: true
+        uri: "http://localhost:#{PORT}/users?bestFriend=#{MikeModel._id}"
+        
+      request opt, (err, res, body) ->
+        should.not.exist err
+        res.statusCode.should.equal 200
+        should.exist body
+        Array.isArray(body).should.equal true
+        body.length.should.equal 1
+        body[0].name.should.equal TomModel.name
+        done()
+
     it 'should return all users with skip', (done) ->
       opt =
         method: "GET"

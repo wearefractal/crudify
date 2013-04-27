@@ -11,7 +11,9 @@ module.exports = (route) ->
     executeAndSendQuery query, res
 
   out.post = (req, res, next) ->
+    return sendError res, new Error("Invalid body") unless typeof req.body is 'object'
     delete req.body._id
+    delete req.body.__v
     query = Model.create req.body
     query = extendQueryFromParams query, req.query
     executeAndSendQuery query, res

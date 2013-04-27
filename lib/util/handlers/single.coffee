@@ -1,5 +1,6 @@
 extendQueryFromParams = require '../extendQueryFromParams'
 executeAndSendQuery = require '../executeAndSendQuery'
+sendError = require '../sendError'
 
 module.exports = (route) ->
   [Model] = route.meta.models
@@ -11,11 +12,29 @@ module.exports = (route) ->
     query = extendQueryFromParams query, req.query
     executeAndSendQuery query, res
 
-  # TODO: actually make a put
-  out.put = out.patch = (req, res, next) ->
+  out.put = (req, res, next) ->
+    return sendError res, new Error("Invalid body") unless typeof req.body is 'object'
     delete req.body._id
+    delete req.body.__v
     singleId = req.params[route.meta.primaryKey]
-    query = Model.findByIdAndUpdate singleId, $set: req.body
+    update =
+      $unset: {}
+      $set: req.body
+    update.$unset[k]=1 for k in Object.keys(Model.schema.paths) when !req.body[k]
+    delete update.$unset._id
+    delete update.$unset.__v
+    query = Model.findByIdAndUpdate singleId, update
+    query = extendQueryFromParams query, req.query
+    executeAndSendQuery query, res
+
+  out.patch = (req, res, next) ->
+    return sendError res, new Error("Invalid body") unless typeof req.body is 'object'
+    delete req.body._id
+    delete req.body.__v
+    singleId = req.params[route.meta.primaryKey]
+    update = 
+      $set: req.body
+    query = Model.findByIdAndUpdate singleId, update
     query = extendQueryFromParams query, req.query
     executeAndSendQuery query, res
 

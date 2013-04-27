@@ -12,6 +12,7 @@ crud.expose 'User'
 PORT = process.env.PORT or 9001
 
 app = express()
+app.use express.bodyParser()
 crud.hook app
 app.listen PORT
 
@@ -51,13 +52,13 @@ describe 'crudify integration', ->
     it 'should return all users', (done) ->
       opt =
         method: "GET"
+        json: true
         uri: "http://localhost:#{PORT}/users"
         
       request opt, (err, res, body) ->
         should.not.exist err
         res.statusCode.should.equal 200
         should.exist body
-        body = JSON.parse body
         Array.isArray(body).should.equal true
         body.length.should.equal 2
         done()
@@ -65,13 +66,13 @@ describe 'crudify integration', ->
     it 'should return all users with limit', (done) ->
       opt =
         method: "GET"
+        json: true
         uri: "http://localhost:#{PORT}/users?limit=1"
         
       request opt, (err, res, body) ->
         should.not.exist err
         res.statusCode.should.equal 200
         should.exist body
-        body = JSON.parse body
         Array.isArray(body).should.equal true
         body.length.should.equal 1
         done()
@@ -79,13 +80,13 @@ describe 'crudify integration', ->
     it 'should return all users with skip', (done) ->
       opt =
         method: "GET"
+        json: true
         uri: "http://localhost:#{PORT}/users?skip=1"
         
       request opt, (err, res, body) ->
         should.not.exist err
         res.statusCode.should.equal 200
         should.exist body
-        body = JSON.parse body
         Array.isArray(body).should.equal true
         body.length.should.equal 1
         done()
@@ -93,13 +94,13 @@ describe 'crudify integration', ->
     it 'should return all users with sort descending', (done) ->
       opt =
         method: "GET"
+        json: true
         uri: "http://localhost:#{PORT}/users?sort=score"
         
       request opt, (err, res, body) ->
         should.not.exist err
         res.statusCode.should.equal 200
         should.exist body
-        body = JSON.parse body
         Array.isArray(body).should.equal true
         body.length.should.equal 2
         (body[0].score <= body[1].score).should.equal true
@@ -108,13 +109,13 @@ describe 'crudify integration', ->
     it 'should return all users with sort ascending', (done) ->
       opt =
         method: "GET"
+        json: true
         uri: "http://localhost:#{PORT}/users?sort=-score"
         
       request opt, (err, res, body) ->
         should.not.exist err
         res.statusCode.should.equal 200
         should.exist body
-        body = JSON.parse body
         Array.isArray(body).should.equal true
         body.length.should.equal 2
         (body[0].score >= body[1].score).should.equal true
@@ -123,13 +124,13 @@ describe 'crudify integration', ->
     it 'should return all users with populate', (done) ->
       opt =
         method: "GET"
+        json: true
         uri: "http://localhost:#{PORT}/users?populate=bestFriend"
         
       request opt, (err, res, body) ->
         should.not.exist err
         res.statusCode.should.equal 200
         should.exist body
-        body = JSON.parse body
         Array.isArray(body).should.equal true
         body.length.should.equal 2
         should.exist body[0].bestFriend
@@ -142,13 +143,13 @@ describe 'crudify integration', ->
     it 'should return user', (done) ->
       opt =
         method: "GET"
+        json: true
         uri: "http://localhost:#{PORT}/users/#{TomModel._id}"
         
       request opt, (err, res, body) ->
         should.not.exist err
         res.statusCode.should.equal 200
         should.exist body
-        body = JSON.parse body
         should.exist body.name
         body.name.should.equal TomModel.name
         body.score.should.equal TomModel.score
@@ -158,13 +159,13 @@ describe 'crudify integration', ->
     it 'should return user with populate', (done) ->
       opt =
         method: "GET"
+        json: true
         uri: "http://localhost:#{PORT}/users/#{TomModel._id}?populate=bestFriend"
         
       request opt, (err, res, body) ->
         should.not.exist err
         res.statusCode.should.equal 200
         should.exist body
-        body = JSON.parse body
         should.exist body.name
         body.name.should.equal TomModel.name
         body.score.should.equal TomModel.score
@@ -175,14 +176,64 @@ describe 'crudify integration', ->
     it 'should return users with populated friend', (done) ->
       opt =
         method: "GET"
+        json: true
         uri: "http://localhost:#{PORT}/users/#{TomModel._id}/bestFriend"
         
       request opt, (err, res, body) ->
         should.not.exist err
         res.statusCode.should.equal 200
         should.exist body
-        body = JSON.parse body
         should.exist body.name
         body.name.should.equal MikeModel.name
         body.score.should.equal MikeModel.score
+        done()
+
+  describe 'PATCH /users/:id', ->
+    it 'should update user', (done) ->
+      opt =
+        method: "PATCH"
+        uri: "http://localhost:#{PORT}/users/#{TomModel._id}"
+        json:
+          score: 9001
+        
+      request opt, (err, res, body) ->
+        should.not.exist err
+        res.statusCode.should.equal 200
+        should.exist body
+        should.exist body.name
+        body.name.should.equal TomModel.name
+        body.score.should.equal 9001
+        done()
+
+  describe 'PUT /users/:id', ->
+    it 'should update user', (done) ->
+      opt =
+        method: "PUT"
+        uri: "http://localhost:#{PORT}/users/#{TomModel._id}"
+        json:
+          name: "Rob"
+        
+      request opt, (err, res, body) ->
+        should.not.exist err
+        res.statusCode.should.equal 200
+        should.exist body
+        should.exist body.name
+        body.name.should.equal "Rob"
+        body.score.should.equal 0
+        done()
+
+  describe 'DELETE /users/:id', ->
+    it 'should update user', (done) ->
+      opt =
+        method: "DELETE"
+        json: true
+        uri: "http://localhost:#{PORT}/users/#{TomModel._id}"
+        
+      request opt, (err, res, body) ->
+        should.not.exist err
+        res.statusCode.should.equal 200
+        should.exist body
+        should.exist body.name
+        body.name.should.equal TomModel.name
+        body.score.should.equal TomModel.score
         done()

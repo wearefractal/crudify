@@ -1,6 +1,7 @@
 extendQueryFromParams = require '../extendQueryFromParams'
 executeAndSendQuery = require '../executeAndSendQuery'
 sendError = require '../sendError'
+getAllPaths = require '../getAllPaths'
 
 module.exports = (route) ->
   [Model] = route.meta.models
@@ -20,7 +21,7 @@ module.exports = (route) ->
     update =
       $unset: {}
       $set: req.body
-    update.$unset[k]=1 for k in Object.keys(Model.schema.paths) when !req.body[k]
+    update.$unset[k]=1 for k in getAllPaths(Model) when !req.body[k]
     delete update.$unset._id
     delete update.$unset.__v
     query = Model.findByIdAndUpdate singleId, update
@@ -32,8 +33,7 @@ module.exports = (route) ->
     delete req.body._id
     delete req.body.__v
     singleId = req.params[route.meta.primaryKey]
-    update = 
-      $set: req.body
+    update = $set: req.body
     query = Model.findByIdAndUpdate singleId, update
     query = extendQueryFromParams query, req.query
     executeAndSendQuery query, res

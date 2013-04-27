@@ -6,6 +6,14 @@ db = require './fixtures/connection'
 User = db.model 'User'
 
 describe 'crudify utils', ->
+  describe 'getAllPaths()', ->
+    it 'should return all user paths', (done) ->
+      paths = util.getAllPaths User
+      should.exist paths
+      expected = ["name","score","bestFriend","friends"]
+      paths.should.eql expected
+      done()
+
   describe 'getPopulatesFromModel()', ->
     it 'should return populated values', (done) ->
       toPopulate = util.getPopulatesFromModel User

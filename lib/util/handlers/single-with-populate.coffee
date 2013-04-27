@@ -1,6 +1,7 @@
 extendQueryFromParams = require '../extendQueryFromParams'
 executeAndSendQuery = require '../executeAndSendQuery'
 sendError = require '../sendError'
+getAllPaths = require '../getAllPaths'
 
 module.exports = (route) ->
   [Model, SubModel] = route.meta.models
@@ -10,7 +11,7 @@ module.exports = (route) ->
   out.get = (req, res, next) ->
     singleId = req.params[route.meta.primaryKey]
     firstQuery = Model.findById singleId
-    firstQuery.select "-#{k}" for k in Object.keys(Model.schema.paths) when k isnt toPopulate
+    firstQuery.select "-#{k}" for k in getAllPaths(Model, false) when k isnt toPopulate
     firstQuery.exec (err, data) ->
       return sendError res, err if err?
       query = SubModel.findById data[toPopulate]
@@ -22,7 +23,7 @@ module.exports = (route) ->
     singleId = req.params[route.meta.primaryKey]
     updates = $set: {}
     updates.$set[toPopulate] = req.body
-    
+
     query = Model.findByIdAndUpdate singleId, $set: req.body
     query = extendQueryFromParams query, req.query
     executeAndSendQuery query, res

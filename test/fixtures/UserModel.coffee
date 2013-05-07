@@ -9,8 +9,10 @@ UserModel = new Schema
   password:
     type: String
     authorize: (req, cb) ->
-      console.log req
-      cb()
+      permission =
+        read: (req.get('hasRead') isnt 'false')
+        write: false
+      cb null, permission
 
   score:
     type: Number
@@ -27,5 +29,17 @@ UserModel = new Schema
 
 UserModel.statics.search = (opt, cb) -> cb null, {query: opt.q}
 UserModel.methods.findWithSameName = (opt, cb) ->  cb null, {name: @name, query: opt.q}
+
+UserModel.statics.authorize = (req, cb) ->
+  permission =
+    read: (req.get('hasRead') isnt 'false')
+    write: true
+  cb null, permission
+
+UserModel.methods.authorize = (req, cb) ->
+  permission =
+    read: (req.get('hasRead') isnt 'false')
+    write: false
+  cb null, permission
 
 module.exports = UserModel

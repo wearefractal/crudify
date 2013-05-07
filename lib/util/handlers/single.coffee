@@ -1,6 +1,8 @@
 extendQueryFromParams = require '../extendQueryFromParams'
 executeAndSendQuery = require '../executeAndSendQuery'
 sendError = require '../sendError'
+sendResult = require '../sendResult'
+sendResultStream = require '../sendResultStream'
 getAllPaths = require '../getAllPaths'
 
 module.exports = (route) ->
@@ -11,7 +13,14 @@ module.exports = (route) ->
     singleId = req.params[route.meta.primaryKey]
     query = Model.findById singleId
     query = extendQueryFromParams query, req.query
-    executeAndSendQuery query, res
+    req.query = query
+    query.exec (err, data) ->
+      return sendError res, err if err?
+      return sendResult res, data unless data.authorize?
+      data.authorize req, (err, perms) ->
+        return sendError res, err if err?
+        return sendResult res, data if perms.read is true
+        return sendError res, "Not authorized"
 
   out.put = (req, res, next) ->
     return sendError res, new Error("Invalid body") unless typeof req.body is 'object'

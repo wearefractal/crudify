@@ -232,6 +232,22 @@ describe 'crudify integration', ->
         body.bestFriend.should.equal String MikeModel._id
         done()
 
+    it 'should return error on invalid authorization', (done) ->
+      opt =
+        method: "GET"
+        json: true
+        headers:
+          hasRead: 'false'
+        uri: "http://localhost:#{PORT}/users/#{TomModel._id}"
+        
+      request opt, (err, res, body) ->
+        should.not.exist err
+        res.statusCode.should.equal 500
+        should.exist body
+        should.exist body.error
+        body.error.should.equal "Not authorized"
+        done()
+
     it 'should return user with populate', (done) ->
       opt =
         method: "GET"

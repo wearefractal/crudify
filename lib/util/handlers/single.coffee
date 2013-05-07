@@ -44,5 +44,4 @@ module.exports = (route) ->
     query = extendQueryFromParams query, req.query
     executeAndSendQuery query, res
 
-  delete out[k] for k,v of out when !(k in route.methods) # adhere to given limits
   return out

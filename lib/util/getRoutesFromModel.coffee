@@ -17,7 +17,6 @@ module.exports = (model) ->
       type: "collection"
       models: [model]
       canStream: true
-    methods: ["get","post"]
     path: "/#{collectionName}"
 
   # static methods
@@ -30,7 +29,6 @@ module.exports = (model) ->
         handlerName: name
         handler: fn
         canStream: false
-      methods: ["get","post"]
       path: "/#{collectionName}/#{name}"
       
   # specific item
@@ -44,7 +42,6 @@ module.exports = (model) ->
       models: [model]
       primaryKey: primaryKey
       canStream: false
-    methods: ["get","put","patch","delete"]
     path: "/#{collectionName}/:#{primaryKey}"
 
   # instance methods
@@ -58,7 +55,6 @@ module.exports = (model) ->
         handler: fn
         primaryKey: primaryKey
         canStream: false
-      methods: ["get","post"]
       path: "/#{collectionName}/:#{primaryKey}/#{name}"
 
   return routes

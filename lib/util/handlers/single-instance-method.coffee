@@ -29,5 +29,4 @@ module.exports = (route) ->
         return sendError res, err if err?
         sendResult res, dat
 
-  delete out[k] for k,v of out when !(k in route.methods) # adhere to given limits
   return out

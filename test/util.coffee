@@ -10,7 +10,7 @@ describe 'crudify utils', ->
     it 'should return all user paths', (done) ->
       paths = util.getAllPaths User
       should.exist paths
-      expected = ["name","score","bestFriend","friends"]
+      expected = ["name","password","score","bestFriend","friends"]
       paths.should.eql expected
       done()
 

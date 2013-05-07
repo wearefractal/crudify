@@ -1,9 +1,16 @@
 {Schema} = mongoose = require 'mongoose'
 
 UserModel = new Schema
+
   name:
     type: String
     required: true
+
+  password:
+    type: String
+    authorize: (req, cb) ->
+      console.log req
+      cb()
 
   score:
     type: Number

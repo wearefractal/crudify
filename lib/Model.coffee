@@ -1,4 +1,5 @@
 getRoutesFromModel = require "./util/getRoutesFromModel"
+async = require 'async'
 
 class Model
   constructor: (@_model) ->

@@ -13,6 +13,17 @@ PORT = process.env.PORT or 9001
 
 app = express()
 app.use express.json()
+
+crud.use (req, res, next) ->
+  should.exist req
+  should.exist res
+  next()
+
+crud.get('User').use (req, res, next) ->
+  should.exist req
+  should.exist res
+  next()
+
 crud.hook app
 app.listen PORT
 

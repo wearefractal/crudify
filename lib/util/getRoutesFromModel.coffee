@@ -16,6 +16,7 @@ module.exports = (model) ->
     meta:
       type: "collection"
       models: [model]
+      canStream: true
     methods: ["get","post"]
     path: "/#{collectionName}"
 
@@ -28,6 +29,7 @@ module.exports = (model) ->
         models: [model]
         handlerName: name
         handler: fn
+        canStream: false
       methods: ["get","post"]
       path: "/#{collectionName}/#{name}"
       
@@ -41,6 +43,7 @@ module.exports = (model) ->
       type: "single"
       models: [model]
       primaryKey: primaryKey
+      canStream: false
     methods: ["get","put","patch","delete"]
     path: "/#{collectionName}/:#{primaryKey}"
 
@@ -54,6 +57,7 @@ module.exports = (model) ->
         handlerName: name
         handler: fn
         primaryKey: primaryKey
+        canStream: false
       methods: ["get","post"]
       path: "/#{collectionName}/:#{primaryKey}/#{name}"
 

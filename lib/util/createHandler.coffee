@@ -1,1 +1,0 @@
-module.exports = (route) -> require("./handlers/#{route.meta.type}")(route)

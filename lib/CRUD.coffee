@@ -1,5 +1,4 @@
 Model = require "./Model"
-createHandler = require "./util/createHandler"
 async = require 'async'
 {join} = require 'path'
 
@@ -45,7 +44,7 @@ class CRUD
     throw new Error "Missing httpServer" unless app?
     for name, model of @_models
       for route in model.routes
-        handler = createHandler route
+        handler = require("./util/handlers/#{route.meta.type}") route
         for method, fn of handler
           p = (if path? then join(path,route.path) else route.path)
           app[method] p, @runMiddleware, model.runMiddleware, fn

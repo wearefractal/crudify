@@ -32,6 +32,15 @@ describe 'crudify utils', ->
       toPopulate.should.eql expected
       done()
 
+  describe 'getRestrictedFromModel()', ->
+    it 'should return restricted values', (done) ->
+      restricted = util.getRestrictedFromModel User
+      should.exist restricted
+      restricted.length.should.eql 1
+      restricted[0].name.should.equal "password"
+      should.exist restricted[0].handler
+      done()
+
   describe 'getStaticsFromModel()', ->
     it 'should return all static methods', (done) ->
       statics = util.getStaticsFromModel User

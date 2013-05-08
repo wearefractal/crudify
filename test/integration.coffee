@@ -282,6 +282,40 @@ describe 'crudify integration', ->
         body.score.should.equal 9001
         done()
 
+    it 'should return error on no read', (done) ->
+      opt =
+        method: "PATCH"
+        uri: "http://localhost:#{PORT}/users/#{TomModel._id}"
+        json:
+          score: 9001
+        headers:
+          hasRead: 'false'
+
+      request opt, (err, res, body) ->
+        should.not.exist err
+        res.statusCode.should.equal 500
+        should.exist body
+        should.exist body.error
+        body.error.should.equal "Not authorized"
+        done()
+
+    it 'should return error on no write', (done) ->
+      opt =
+        method: "PATCH"
+        uri: "http://localhost:#{PORT}/users/#{TomModel._id}"
+        json:
+          score: 9001
+        headers:
+          hasWrite: 'false'
+        
+      request opt, (err, res, body) ->
+        should.not.exist err
+        res.statusCode.should.equal 500
+        should.exist body
+        should.exist body.error
+        body.error.should.equal "Not authorized"
+        done()
+
   describe 'PUT /users/:id', ->
     it 'should update user', (done) ->
       opt =
@@ -299,6 +333,40 @@ describe 'crudify integration', ->
         body.score.should.equal 0
         done()
 
+    it 'should return error on no read', (done) ->
+      opt =
+        method: "PUT"
+        uri: "http://localhost:#{PORT}/users/#{TomModel._id}"
+        json:
+          name: "Rob"
+        headers:
+          hasRead: 'false'
+        
+      request opt, (err, res, body) ->
+        should.not.exist err
+        res.statusCode.should.equal 500
+        should.exist body
+        should.exist body.error
+        body.error.should.equal "Not authorized"
+        done()
+
+    it 'should return error on no write', (done) ->
+      opt =
+        method: "PUT"
+        uri: "http://localhost:#{PORT}/users/#{TomModel._id}"
+        json:
+          name: "Rob"
+        headers:
+          hasWrite: 'false'
+        
+      request opt, (err, res, body) ->
+        should.not.exist err
+        res.statusCode.should.equal 500
+        should.exist body
+        should.exist body.error
+        body.error.should.equal "Not authorized"
+        done()
+
   describe 'DELETE /users/:id', ->
     it 'should update user', (done) ->
       opt =
@@ -314,6 +382,39 @@ describe 'crudify integration', ->
         body.name.should.equal TomModel.name
         body.score.should.equal TomModel.score
         done()
+
+    it 'should return error on no read', (done) ->
+      opt =
+        method: "DELETE"
+        json: true
+        uri: "http://localhost:#{PORT}/users/#{TomModel._id}"
+        headers:
+          hasDelete: 'false'
+        
+      request opt, (err, res, body) ->
+        should.not.exist err
+        res.statusCode.should.equal 500
+        should.exist body
+        should.exist body.error
+        body.error.should.equal "Not authorized"
+        done()
+
+    it 'should return error on no write', (done) ->
+      opt =
+        method: "DELETE"
+        json: true
+        uri: "http://localhost:#{PORT}/users/#{TomModel._id}"
+        headers:
+          hasDelete: 'false'
+        
+      request opt, (err, res, body) ->
+        should.not.exist err
+        res.statusCode.should.equal 500
+        should.exist body
+        should.exist body.error
+        body.error.should.equal "Not authorized"
+        done()
+
         
   ###
   describe 'GET /users/:id/bestFriend', ->

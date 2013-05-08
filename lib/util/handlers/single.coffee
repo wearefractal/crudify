@@ -2,55 +2,97 @@ extendQueryFromParams = require '../extendQueryFromParams'
 executeAndSendQuery = require '../executeAndSendQuery'
 sendError = require '../sendError'
 sendResult = require '../sendResult'
-sendResultStream = require '../sendResultStream'
 getAllPaths = require '../getAllPaths'
+filterDocument = require '../filterDocument'
+defaultPerms = require '../defaultPerms'
 
 module.exports = (route) ->
   [Model] = route.meta.models
   out = {}
-    
+
   out.get = (req, res, next) ->
     singleId = req.params[route.meta.primaryKey]
     query = Model.findById singleId
     query = extendQueryFromParams query, req.query
-    req.query = query
-    query.exec (err, data) ->
+    query.exec (err, mod) ->
       return sendError res, err if err?
-      return sendResult res, data unless data.authorize?
-      data.authorize req, (err, perms) ->
-        return sendError res, err if err?
-        return sendResult res, data if perms.read is true
-        return sendError res, "Not authorized"
+      perms = (if mod.authorize then mod.authorize(req) else defaultPerms)
+      return sendError res, "Not authorized" unless perms.read is true
+      nMod = filterDocument req, mod
+      return sendResult res, nMod
 
   out.put = (req, res, next) ->
     return sendError res, new Error("Invalid body") unless typeof req.body is 'object'
     delete req.body._id
     delete req.body.__v
     singleId = req.params[route.meta.primaryKey]
-    update =
-      $unset: {}
-      $set: req.body
-    update.$unset[k]=1 for k in getAllPaths(Model) when !req.body[k]
-    delete update.$unset._id
-    delete update.$unset.__v
-    query = Model.findByIdAndUpdate singleId, update
+    query = Model.findById singleId
     query = extendQueryFromParams query, req.query
-    executeAndSendQuery query, res
+    query.exec (err, mod) ->
+      return sendError err if err?
+      perms = (if mod.authorize then mod.authorize(req) else defaultPerms)
+      return sendError res, "Not authorized" unless perms.read is true
+      return sendError res, "Not authorized" unless perms.write is true
+      
+      for k in getAllPaths Model
+        continue if k is '_id' or k is '__v'
+        if mod.schema.paths[k].authorize?
+          toCall = mod.schema.paths[k].authorize.bind mod
+          perms = toCall req
+          return sendError res, "Not authorized" unless perms.read is true
+          return sendError res, "Not authorized" unless perms.write is true
+        
+        # TODO: remove this hack
+        newVal = undefined
+        if (def = mod.schema.paths[k].defaultValue)?
+          newVal = (if typeof def is 'function' then def.bind(mod)() else def)
+        mod.set k, newVal
+
+      mod.set req.body
+
+      mod.save (err, nMod) ->
+        return sendError res, err if err?
+        return sendResult res, mod
 
   out.patch = (req, res, next) ->
     return sendError res, new Error("Invalid body") unless typeof req.body is 'object'
     delete req.body._id
     delete req.body.__v
     singleId = req.params[route.meta.primaryKey]
-    update = $set: req.body
-    query = Model.findByIdAndUpdate singleId, update
+    query = Model.findById singleId
     query = extendQueryFromParams query, req.query
-    executeAndSendQuery query, res
+    query.exec (err, mod) ->
+      return sendError err if err?
+      perms = (if mod.authorize then mod.authorize(req) else defaultPerms)
+      return sendError res, "Not authorized" unless perms.read is true
+      return sendError res, "Not authorized" unless perms.write is true
+      
+      for k,v of req.body when (k in getAllPaths(Model))
+        if mod.schema.paths[k].authorize?
+          toCall = mod.schema.paths[k].authorize.bind mod
+          perms = toCall req
+          return sendError res, "Not authorized" unless perms.read is true
+          return sendError res, "Not authorized" unless perms.write is true
+
+        mod.set k, v
+
+      mod.save (err, nMod) ->
+        return sendError res, err if err?
+        return sendResult res, mod
 
   out.delete = (req, res, next) ->
     singleId = req.params[route.meta.primaryKey]
-    query = Model.findByIdAndRemove singleId
+    query = Model.findById singleId
     query = extendQueryFromParams query, req.query
-    executeAndSendQuery query, res
+    query.exec (err, mod) ->
+      return sendError err if err?
+      perms = (if mod.authorize then mod.authorize(req) else defaultPerms)
+      return sendError res, "Not authorized" unless perms.read is true
+      return sendError res, "Not authorized" unless perms.write is true
+      return sendError res, "Not authorized" unless perms.delete is true
+      
+      mod.remove (err) ->
+        return sendError res, err if err?
+        return sendResult res, mod
 
   return out

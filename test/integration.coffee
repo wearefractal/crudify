@@ -316,6 +316,21 @@ describe 'crudify integration', ->
         body.error.should.equal "Not authorized"
         done()
 
+    it 'should return error on no write for specific field', (done) ->
+      opt =
+        method: "PATCH"
+        uri: "http://localhost:#{PORT}/users/#{TomModel._id}"
+        json:
+          password: "test"
+        
+      request opt, (err, res, body) ->
+        should.not.exist err
+        res.statusCode.should.equal 500
+        should.exist body
+        should.exist body.error
+        body.error.should.equal "Not authorized"
+        done()
+
   describe 'PUT /users/:id', ->
     it 'should update user', (done) ->
       opt =

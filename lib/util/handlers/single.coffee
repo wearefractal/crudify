@@ -36,12 +36,17 @@ module.exports = (route) ->
       
       for k in getAllPaths Model
         continue if k is '_id' or k is '__v'
-        if mod.schema.paths[k].authorize?
-          toCall = mod.schema.paths[k].authorize.bind mod
+        if mod.schema.paths[k].options?.authorize?
+          toCall = mod.schema.paths[k].options.authorize.bind mod
           perms = toCall req
+          continue unless perms.read
+          continue unless perms.write
+          # TODO: figure this out
+          ###
           return sendError res, "Not authorized" unless perms.read is true
           return sendError res, "Not authorized" unless perms.write is true
-        
+          ###
+
         # TODO: remove this hack
         newVal = undefined
         if (def = mod.schema.paths[k].defaultValue)?
@@ -68,8 +73,8 @@ module.exports = (route) ->
       return sendError res, "Not authorized" unless perms.write is true
       
       for k,v of req.body when (k in getAllPaths(Model))
-        if mod.schema.paths[k].authorize?
-          toCall = mod.schema.paths[k].authorize.bind mod
+        if mod.schema.paths[k].options?.authorize?
+          toCall = mod.schema.paths[k].options.authorize.bind mod
           perms = toCall req
           return sendError res, "Not authorized" unless perms.read is true
           return sendError res, "Not authorized" unless perms.write is true

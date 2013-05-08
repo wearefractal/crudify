@@ -10,8 +10,8 @@ UserModel = new Schema
     type: String
     authorize: (req) ->
       permission =
-        read: (req.get('hasRead') isnt 'false')
-        write: (req.get('hasWrite') isnt 'false')
+        read: false
+        write: false
       return permission
 
   score:

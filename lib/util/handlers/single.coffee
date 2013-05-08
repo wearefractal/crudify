@@ -1,5 +1,4 @@
 extendQueryFromParams = require '../extendQueryFromParams'
-executeAndSendQuery = require '../executeAndSendQuery'
 sendError = require '../sendError'
 sendResult = require '../sendResult'
 getAllPaths = require '../getAllPaths'

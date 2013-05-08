@@ -1,7 +1,7 @@
 extendQueryFromParams = require '../extendQueryFromParams'
-executeAndSendQuery = require '../executeAndSendQuery'
 sendError = require '../sendError'
 sendResult = require '../sendResult'
+defaultPerms = require '../defaultPerms'
 
 module.exports = (route) ->
   [Model] = route.meta.models

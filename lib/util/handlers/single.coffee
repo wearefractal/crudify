@@ -39,13 +39,11 @@ module.exports = (route) ->
         if mod.schema.paths[k].options?.authorize?
           toCall = mod.schema.paths[k].options.authorize.bind mod
           perms = toCall req
-          continue unless perms.read
-          continue unless perms.write
-          # TODO: figure this out
-          ###
-          return sendError res, "Not authorized" unless perms.read is true
-          return sendError res, "Not authorized" unless perms.write is true
-          ###
+          if req.body[k]? # they explicitly tried to PUT a change on a non-writable field
+            return sendError res, "Not authorized" unless perms.read is true
+            return sendError res, "Not authorized" unless perms.write is true
+          continue unless perms.read is true
+          continue unless perms.write is true
 
         # TODO: remove this hack
         newVal = undefined

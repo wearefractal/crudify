@@ -8,6 +8,7 @@ UserModel = new Schema
 
   password:
     type: String
+    default: "pass123"
     authorize: (req) ->
       permission =
         read: false

@@ -348,6 +348,39 @@ describe 'crudify integration', ->
         body.score.should.equal 0
         done()
 
+    it 'should not update reset field with no write', (done) ->
+      opt =
+        method: "PUT"
+        uri: "http://localhost:#{PORT}/users/#{TomModel._id}"
+        json:
+          name: "Rob"
+
+      request opt, (err, res, body) ->
+        should.not.exist err
+        res.statusCode.should.equal 200
+        should.exist body
+        should.exist body.name
+        body.name.should.equal "Rob"
+        body.score.should.equal 0
+        body.password.should.equal "pass123"
+        done()
+
+    it 'should error on field change with no write', (done) ->
+      opt =
+        method: "PUT"
+        uri: "http://localhost:#{PORT}/users/#{TomModel._id}"
+        json:
+          name: "Rob"
+          password: "jah"
+
+      request opt, (err, res, body) ->
+        should.not.exist err
+        res.statusCode.should.equal 500
+        should.exist body
+        should.exist body.error
+        body.error.should.equal "Not authorized"
+        done()
+
     it 'should return error on no read', (done) ->
       opt =
         method: "PUT"

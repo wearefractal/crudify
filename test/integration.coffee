@@ -75,6 +75,21 @@ describe 'crudify integration', ->
         body.length.should.equal 2
         done()
 
+    it 'should error with no read', (done) ->
+      opt =
+        method: "GET"
+        json: true
+        uri: "http://localhost:#{PORT}/users"
+        headers:
+          hasRead: "false"
+      request opt, (err, res, body) ->
+        should.not.exist err
+        res.statusCode.should.equal 500
+        should.exist body
+        should.exist body.error
+        body.error.should.equal "Not authorized"
+        done()
+
     it 'should return all users with limit', (done) ->
       opt =
         method: "GET"

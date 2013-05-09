@@ -34,7 +34,6 @@ module.exports = (route) ->
       return sendError res, "Not authorized" unless perms.write is true
       
       for k in getAllPaths Model
-        continue if k is '_id' or k is '__v'
         if mod.schema.paths[k].options?.authorize?
           toCall = mod.schema.paths[k].options.authorize.bind mod
           perms = toCall req

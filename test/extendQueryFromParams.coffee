@@ -16,28 +16,6 @@ describe 'extendQueryFromParams()', ->
       should.exist query.flags
       done()
 
-    it 'should not override flags when extended twice', (done) ->
-      query = User.find()
-      query.where('name').in(["Tom","Rob"])
-      params =
-        stream: true
-
-      query = util.extendQueryFromParams query, params
-      should.exist query.flags
-      should.exist query.flags.stream
-      query.flags.stream.should.equal true
-
-      params2 =
-        stream: true
-
-      query = util.extendQueryFromParams query, params2
-      should.exist query.flags
-      should.exist query.flags.stream
-      query.flags.stream.should.equal true
-      should.exist query.flags.stream
-      query.flags.stream.should.equal true
-      done()
-
   describe 'skip', ->
     it 'should work with valid string number', (done) ->
       query = User.find()

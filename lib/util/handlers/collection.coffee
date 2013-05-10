@@ -1,7 +1,6 @@
 extendQueryFromParams = require '../extendQueryFromParams'
 sendError = require '../sendError'
 sendResult = require '../sendResult'
-sendResultStream = require '../sendResultStream'
 defaultPerms = require '../defaultPerms'
 
 module.exports = (route) ->
@@ -13,11 +12,7 @@ module.exports = (route) ->
     return sendError res, "Not authorized" unless perms.read is true
     query = Model.find()
     query = extendQueryFromParams query, req.query
-    if query.flags.stream
-      stream = query.stream()
-      sendResultStream res, stream
-      return
-  
+
     query.exec (err, data) ->
       return sendError res, err if err?
       return sendResult res, data

@@ -10,13 +10,12 @@
    "dependencies":{
       "coffee-script":"*",
       "require-directory":"*",
-      "async":"*",
-      "JSONStream":"*"
+      "async":"*"
    },
    "devDependencies":{
       "mocha":"*",
       "should":"*",
-      "mongoose":"*",
+      "orm":"*",
       "request":"*",
       "express":"*"
    },

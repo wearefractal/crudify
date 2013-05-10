@@ -1,6 +1,6 @@
 hasField = require './hasField'
 
-reserved = ["skip","limit","sort","populate","stream"]
+reserved = ["skip","limit","sort","populate"]
 
 validArg = (v) -> v?
 validNumber = (v) -> validArg(v) and !isNaN v
@@ -15,7 +15,6 @@ skip can be a number or string of a number greater than 0
 limit can be a number or string of a number greater than 0
 sort can be a field name optionally prefixed with + or - to set sort order
 populate can be a field name
-stream can be true or false
 ###
 
 module.exports = (query, params={}) ->
@@ -40,9 +39,6 @@ module.exports = (query, params={}) ->
     actualField = getField params.populate
     if hasField query.model, actualField
       query.populate params.populate
-
-  if validArg params.stream
-    query.flags.stream = isTrue params.stream
 
   # .where() all unreserved query params that are also model fields
   # longest line ever lol

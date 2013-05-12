@@ -12,10 +12,13 @@
 - [ ] There should be a post query middleware for transforming the results before they are returned to the client. This would be used for transforming results for older api interfaces. [ccowan]
 
 ```coffee
+crud = crudify db
+model = crud.expose "User"
 # Not sure if this will need to be async or not.
-crud.transform (doc) ->
+model.transform (doc) ->
    doc.first_name = doc.name.first
    doc.last_name = doc.name.last
    doc.nickname = doc.name.nick
    delete doc.name
+crud.hook "/api/v2", app
 ```

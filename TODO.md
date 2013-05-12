@@ -1,12 +1,12 @@
 ## Todo Items for First Release
 
-- Figure out single-with-populate shit
-- Allow recursive routes
-- Support nested populate querystring params
-- Clean up code to be simpler
+- Figure out if we need to support populate (also includes recursive routes)
+- Support multiple querystring populates
+- Pass full http request into static/instance handlers
+- 
 - Filter all models by authorization on collection methods
 - Add model filter on single put/patch/post
-- Fix getDefault on schemas
+- Fix getDefault on schemas to support functions
 - Set the default skip/limit to 0/20 for all collection views [ccowan]
 - Have a way to overide the collection query (Model.find()) to use a static method from the model [ccowan]
 - There should be a post query middleware for transforming the results before they are returned to the client. This would be used for transforming results for older api interfaces. [ccowan]
@@ -24,3 +24,5 @@ crud.hook "/api/v2", app
 ```
 
 - Specify query restrictions like max limit, max specificity, etc.
+- Allow people to specify which fields are selected via querystring
+- Attach meta info to http request object before passing it to authorize or handlers

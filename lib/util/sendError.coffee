@@ -1,3 +1,10 @@
-module.exports = (res, err) ->
+module.exports = (res, err, code=500) ->
   res.set 'Content-Type', 'application/json'
-  return res.send 500, error: err
+  if typeof err is 'string'
+    res.send code,
+      error:
+        message: err
+  else
+    res.send code, error: err
+
+  return res

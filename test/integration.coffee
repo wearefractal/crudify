@@ -87,7 +87,8 @@ describe 'crudify integration', ->
         res.statusCode.should.equal 500
         should.exist body
         should.exist body.error
-        body.error.should.equal "Not authorized"
+        should.exist body.error.message
+        body.error.message.should.equal "Not authorized"
         done()
 
     it 'should return all users with limit', (done) ->
@@ -283,7 +284,8 @@ describe 'crudify integration', ->
         res.statusCode.should.equal 500
         should.exist body
         should.exist body.error
-        body.error.should.equal "Not authorized"
+        should.exist body.error.message
+        body.error.message.should.equal "Not authorized"
         done()
 
     it 'should return user with populate', (done) ->
@@ -334,7 +336,8 @@ describe 'crudify integration', ->
         res.statusCode.should.equal 500
         should.exist body
         should.exist body.error
-        body.error.should.equal "Not authorized"
+        should.exist body.error.message
+        body.error.message.should.equal "Not authorized"
         done()
 
     it 'should return error on no write', (done) ->
@@ -351,7 +354,8 @@ describe 'crudify integration', ->
         res.statusCode.should.equal 500
         should.exist body
         should.exist body.error
-        body.error.should.equal "Not authorized"
+        should.exist body.error.message
+        body.error.message.should.equal "Not authorized"
         done()
 
     it 'should return error on no write for specific field', (done) ->
@@ -366,7 +370,8 @@ describe 'crudify integration', ->
         res.statusCode.should.equal 500
         should.exist body
         should.exist body.error
-        body.error.should.equal "Not authorized"
+        should.exist body.error.message
+        body.error.message.should.equal "Not authorized"
         done()
 
   describe 'PUT /users/:id', ->
@@ -416,7 +421,8 @@ describe 'crudify integration', ->
         res.statusCode.should.equal 500
         should.exist body
         should.exist body.error
-        body.error.should.equal "Not authorized"
+        should.exist body.error.message
+        body.error.message.should.equal "Not authorized"
         done()
 
     it 'should return error on no read', (done) ->
@@ -433,7 +439,8 @@ describe 'crudify integration', ->
         res.statusCode.should.equal 500
         should.exist body
         should.exist body.error
-        body.error.should.equal "Not authorized"
+        should.exist body.error.message
+        body.error.message.should.equal "Not authorized"
         done()
 
     it 'should return error on no write', (done) ->
@@ -450,7 +457,8 @@ describe 'crudify integration', ->
         res.statusCode.should.equal 500
         should.exist body
         should.exist body.error
-        body.error.should.equal "Not authorized"
+        should.exist body.error.message
+        body.error.message.should.equal "Not authorized"
         done()
 
   describe 'DELETE /users/:id', ->
@@ -482,7 +490,8 @@ describe 'crudify integration', ->
         res.statusCode.should.equal 500
         should.exist body
         should.exist body.error
-        body.error.should.equal "Not authorized"
+        should.exist body.error.message
+        body.error.message.should.equal "Not authorized"
         done()
 
     it 'should return error on no write', (done) ->
@@ -498,7 +507,8 @@ describe 'crudify integration', ->
         res.statusCode.should.equal 500
         should.exist body
         should.exist body.error
-        body.error.should.equal "Not authorized"
+        should.exist body.error.message
+        body.error.message.should.equal "Not authorized"
         done()
 
         

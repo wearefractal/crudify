@@ -1,9 +1,8 @@
-## Todo Items for First Release
+## TODO for 0.1
 
 - Figure out if we need to support populate (also includes recursive routes)
 - Support multiple querystring populates
 - Pass full http request into static/instance handlers
-- 
 - Filter all models by authorization on collection methods
 - Add model filter on single put/patch/post
 - Fix getDefault on schemas to support functions

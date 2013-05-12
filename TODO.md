@@ -22,3 +22,5 @@ model.transform (doc) ->
    delete doc.name
 crud.hook "/api/v2", app
 ```
+
+- Specify query restrictions like max limit, max specificity, etc.

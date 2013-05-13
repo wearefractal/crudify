@@ -197,6 +197,29 @@ describe 'crudify integration', ->
         body.score.should.equal 0
         done()
 
+    it 'have a validation error if name is blank', (done) ->
+      opt =
+        method: "POST"
+        json:
+          name: ""
+        uri: "http://localhost:#{PORT}/users"
+        
+      request opt, (err, res, body) ->
+        should.not.exist err
+        res.statusCode.should.equal 500
+        should.exist body
+        body.error.should.eql
+          message: 'Validation failed'
+          name: 'ValidationError'
+          errors: 
+            name: 
+              message: 'Validator "required" failed for path name with value ``'
+              name: 'ValidatorError'
+              path: 'name'
+              type: 'required'
+              value: ''
+        done()
+
   # static methods
   describe 'GET /users/search', ->
     it 'should call the static method', (done) ->

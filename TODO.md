@@ -1,7 +1,6 @@
 ## TODO for 0.1
 
-- Figure out if we need to support populate (also includes recursive routes)
-- Support multiple querystring populates
+- Figure out if we need to support populate via path (also includes recursive routes)
 - Pass full http request into static/instance handlers
 - Filter all models by authorization on collection methods
 - Add model filter on single put/patch/post

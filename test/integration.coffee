@@ -45,8 +45,9 @@ beforeEach (done) ->
     User.create mike, (err, doc) ->
       return done err if err?
       MikeModel = doc
-
+      TomModel.friends.push MikeModel
       TomModel.set 'bestFriend', MikeModel
+      MikeModel.friends.push TomModel
       MikeModel.set 'bestFriend', TomModel
 
       TomModel.save (err) ->
@@ -164,7 +165,7 @@ describe 'crudify integration', ->
         (body[0].score >= body[1].score).should.equal true
         done()
 
-    it 'should return all users with populate', (done) ->
+    it 'should return all users with populate of one field', (done) ->
       opt =
         method: "GET"
         json: true
@@ -180,6 +181,28 @@ describe 'crudify integration', ->
         should.exist body[0].bestFriend.score
         should.exist body[1].bestFriend
         should.exist body[1].bestFriend.score
+        done()
+
+    it 'should return all users with populate of two fields', (done) ->
+      opt =
+        method: "GET"
+        json: true
+        uri: "http://localhost:#{PORT}/users?populate=bestFriend&populate=friends"
+        
+      request opt, (err, res, body) ->
+        should.not.exist err
+        res.statusCode.should.equal 200
+        should.exist body
+        Array.isArray(body).should.equal true
+        body.length.should.equal 2
+        should.exist body[0].bestFriend
+        should.exist body[0].bestFriend.score
+        should.exist body[1].bestFriend
+        should.exist body[1].bestFriend.score
+        should.exist body[0].friends[0]
+        should.exist body[0].friends[0].score
+        should.exist body[1].friends[0]
+        should.exist body[1].friends[0].score
         done()
 
   describe 'POST /users', ->

@@ -3,8 +3,8 @@ hasField = require './hasField'
 reserved = ["skip","limit","sort","populate"]
 
 validArg = (v) -> v?
-validNumber = (v) -> validArg(v) and !isNaN v
-validField = (v) -> validArg(v) and v.length > 0
+validNumber = (v) -> validArg(v) and typeof(v) in ["number","string"] and !isNaN(v)
+validField = (v) -> validArg(v) and typeof(v) is 'string' and v.length > 0
 isTrue = (v) -> (v is true) or (v is 'true')
 getField = (v) ->
   return v[1...] if (v[0] is '-')
@@ -30,17 +30,32 @@ module.exports = (query, params={}) ->
     limit = parseInt params.limit
     query.limit limit if limit > 0 # dont bother with jokers
 
-  if validField params.sort
-    actualField = getField params.sort
-    if hasField query.model, actualField
-      query.sort params.sort
+  # Sort by field
+  sortField = (field) ->
+    if validField field
+      actualField = getField field
+      if hasField query.model, actualField
+        query.sort field
 
-  if validField params.populate
-    actualField = getField params.populate
-    if hasField query.model, actualField
-      query.populate params.populate
+  if Array.isArray params.sort
+    sortField f for f in params.sort
+  else
+    sortField params.sort
+
+  # Populate field
+  popField = (field) ->
+    if validField field
+      actualField = getField field
+      if hasField query.model, actualField
+        query.populate field
+
+  if Array.isArray params.populate
+    popField f for f in params.populate
+  else
+    popField params.populate
 
   # .where() all unreserved query params that are also model fields
-  # longest line ever lol
-  query.where name, val for name, val of params when !(name in reserved) and validField(name) and validArg(val) and hasField(query.model, name)
+  for name, val of params when !(name in reserved) and validField(name) and hasField(query.model, name)
+    if validArg val
+      query.where name, val 
   return query

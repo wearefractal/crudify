@@ -15,7 +15,6 @@
    "devDependencies":{
       "mocha":"*",
       "should":"*",
-      "orm":"*",
       "request":"*",
       "express":"*",
       "mongoose":"*"

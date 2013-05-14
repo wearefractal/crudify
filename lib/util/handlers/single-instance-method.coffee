@@ -9,7 +9,7 @@ module.exports = (route) ->
   handlerName = route.meta.handlerName
   out = {}
   
-  out.get = (req, res, next) ->
+  doIt = (req, res, next) ->
     singleId = req.params[route.meta.primaryKey]
     query = Model.findById singleId
     query = extendQueryFromParams query, req.query
@@ -18,22 +18,12 @@ module.exports = (route) ->
       return sendError res, "Not found", 404 unless mod?
       perms = (if mod.authorize then mod.authorize(req) else defaultPerms)
       return sendError res, "Not authorized" unless perms.read is true
-      mod[handlerName] req.query, (err, dat) ->
+      mod[handlerName] req, (err, dat) ->
         return sendError res, err if err?
         sendResult res, dat
 
-  out.post = (req, res, next) ->
-    return sendError res, new Error("Invalid body") unless typeof req.body is 'object'
-    singleId = req.params[route.meta.primaryKey]
-    query = Model.findById singleId
-    query = extendQueryFromParams query, req.query
-    execQuery.bind(@) req, res, query, (err, mod) ->
-      return sendError res, err if err?
-      return sendError res, "Not found", 404 unless mod?
-      perms = (if mod.authorize then mod.authorize(req) else defaultPerms)
-      return sendError res, "Not authorized" unless perms.read is true
-      mod[handlerName] req.body, (err, dat) ->
-        return sendError res, err if err?
-        sendResult res, dat
-
+  out.get = doIt
+  out.post = doIt
+  out.patch = doIt
+  out.delete = doIt
   return out

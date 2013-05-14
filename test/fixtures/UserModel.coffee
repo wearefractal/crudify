@@ -28,8 +28,8 @@ UserModel = new Schema
     ref: 'User'
   ]
 
-UserModel.statics.search = (opt, cb) -> cb null, {query: opt.q}
-UserModel.methods.findWithSameName = (opt, cb) ->  cb null, {name: @name, query: opt.q}
+UserModel.statics.search = (req, cb) -> cb null, {query: req.query.q}
+UserModel.methods.findWithSameName = (req, cb) ->  cb null, {name: @name, query: req.query.q}
 
 UserModel.statics.authorize = (req) ->
   permission =

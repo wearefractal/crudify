@@ -15,6 +15,7 @@ module.exports = (route) ->
     query = extendQueryFromParams query, req.query
     query.exec (err, mod) ->
       return sendError res, err if err?
+      return sendError res, "Not found", 404 unless mod?
       perms = (if mod.authorize then mod.authorize(req) else defaultPerms)
       return sendError res, "Not authorized" unless perms.read is true
       nMod = filterDocument req, mod
@@ -28,7 +29,8 @@ module.exports = (route) ->
     query = Model.findById singleId
     query = extendQueryFromParams query, req.query
     query.exec (err, mod) ->
-      return sendError err if err?
+      return sendError res, err if err? 
+      return sendError res, "Not found", 404 unless mod?
       perms = (if mod.authorize then mod.authorize(req) else defaultPerms)
       return sendError res, "Not authorized" unless perms.read is true
       return sendError res, "Not authorized" unless perms.write is true
@@ -63,7 +65,8 @@ module.exports = (route) ->
     query = Model.findById singleId
     query = extendQueryFromParams query, req.query
     query.exec (err, mod) ->
-      return sendError err if err?
+      return sendError res, err if err?
+      return sendError res, "Not found", 404 unless mod?
       perms = (if mod.authorize then mod.authorize(req) else defaultPerms)
       return sendError res, "Not authorized" unless perms.read is true
       return sendError res, "Not authorized" unless perms.write is true
@@ -86,7 +89,8 @@ module.exports = (route) ->
     query = Model.findById singleId
     query = extendQueryFromParams query, req.query
     query.exec (err, mod) ->
-      return sendError err if err?
+      return sendError res, err if err?
+      return sendError res, "Not found", 404 unless mod?
       perms = (if mod.authorize then mod.authorize(req) else defaultPerms)
       return sendError res, "Not authorized" unless perms.read is true
       return sendError res, "Not authorized" unless perms.write is true

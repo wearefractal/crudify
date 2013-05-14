@@ -50,8 +50,12 @@ class CRUD extends hookify
     thisPost = (req, res, next) =>
       @runPost 'handle', [req,res], next
     
+    attachMeta = (req, res, next) =>
+      req.meta = route
+      next()
+
     for method, fn of handler
-      app[method] p, thisPre, modelPre, fn.bind(@), thisPost, modelPost
+      app[method] p, attachMeta, thisPre, modelPre, fn.bind(@), thisPost, modelPost
     return @
 
   hook: (path, app) ->

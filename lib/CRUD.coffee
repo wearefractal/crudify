@@ -37,6 +37,13 @@ class CRUD
     async.forEachSeries @_middleware, run, cb
     return
 
+  _hookRoute: (path, app, model, route) ->
+    handler = require("./util/handlers/#{route.meta.type}") route
+    p = (if path? then join(path,route.path) else route.path)
+    for method, fn of handler
+      app[method] p, @runMiddleware, model.runMiddleware, fn
+    return @
+
   hook: (path, app) ->
     if typeof path isnt 'string'
       app = path
@@ -44,10 +51,7 @@ class CRUD
     throw new Error "Missing httpServer" unless app?
     for name, model of @_models
       for route in model.routes
-        handler = require("./util/handlers/#{route.meta.type}") route
-        for method, fn of handler
-          p = (if path? then join(path,route.path) else route.path)
-          app[method] p, @runMiddleware, model.runMiddleware, fn
+        @_hookRoute path, app, model, route
     return @
 
 module.exports = CRUD

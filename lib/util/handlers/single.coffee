@@ -5,6 +5,7 @@ getAllPaths = require '../getAllPaths'
 filterDocument = require '../filterDocument'
 defaultPerms = require '../defaultPerms'
 execQuery = require '../execQuery'
+getDefault = require '../getDefault'
 
 module.exports = (route) ->
   [Model] = route.meta.models
@@ -46,11 +47,7 @@ module.exports = (route) ->
           continue unless perms.read is true
           continue unless perms.write is true
 
-        # TODO: remove this hack
-        newVal = undefined
-        if (def = mod.schema.paths[k].defaultValue)?
-          newVal = (if typeof def is 'function' then def.bind(mod)() else def)
-        mod.set k, newVal
+        mod.set k, getDefault(mod, k)
 
       mod.set req.body
 

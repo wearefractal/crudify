@@ -5,7 +5,6 @@
 - Filter all models by authorization on collection methods
 - Add model filter on single put/patch/post
 - Correct response codes for each operation
-- Fix getDefault on schemas to support functions
 - More tests
 - Set the default skip/limit to 0/20 for all collection views [ccowan]
 - Have a way to overide the collection query (Model.find()) to use a static method from the model [ccowan]

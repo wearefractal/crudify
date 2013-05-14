@@ -1,23 +1,15 @@
 getRoutesFromModel = require "./util/getRoutesFromModel"
 async = require 'async'
+hookify = require 'hookify'
 
-class Model
+class Model extends hookify
   constructor: (@_model) ->
+    super
     @updateRoutes()
     @_middleware = []
 
   updateRoutes: ->
     @routes = getRoutesFromModel @_model
     return @
-
-  use: (fn) ->
-    @_middleware.push fn
-    return @
-    
-  runMiddleware: (a..., cb) =>
-    return cb() unless @_middleware.length isnt 0
-    run = (middle, done) => middle a..., done
-    async.forEachSeries @_middleware, run, cb
-    return
 
 module.exports = Model

@@ -1,9 +1,11 @@
 Model = require "./Model"
 async = require 'async'
 {join} = require 'path'
+hookify = require 'hookify'
 
-class CRUD
+class CRUD extends hookify
   constructor: (@db) ->
+    super
     throw new Error "Missing db argument" unless @db?
     @_models = {}
     @_middleware = []
@@ -30,18 +32,22 @@ class CRUD
   use: (fn) ->
     @_middleware.push fn
     return @
-    
-  runMiddleware: (a..., cb) =>
-    return cb() unless @_middleware.length isnt 0
-    run = (middle, done) => middle a..., done
-    async.forEachSeries @_middleware, run, cb
-    return
 
   _hookRoute: (path, app, model, route) ->
     handler = require("./util/handlers/#{route.meta.type}") route
     p = (if path? then join(path,route.path) else route.path)
+    modelPre = (req, res, next) ->
+      model.runPre 'handle', [req,res], next
+    modelPost = (req, res, next) ->
+      model.runPost 'handle', [req,res], next
+    
+    thisPre = (req, res, next) =>
+      @runPre 'handle', [req,res], next
+    thisPost = (req, res, next) =>
+      @runPost 'handle', [req,res], next
+    
     for method, fn of handler
-      app[method] p, @runMiddleware, model.runMiddleware, fn
+      app[method] p, thisPre, modelPre, fn, thisPost, modelPost
     return @
 
   hook: (path, app) ->

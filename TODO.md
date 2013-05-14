@@ -1,6 +1,5 @@
 ## TODO for 0.1
 
-- Actually unwire in CRUD.unexpose
 - Figure out if we need to support populate via path (also includes recursive routes)
 - Pass full http request into static/instance handlers
 - Filter all models by authorization on collection methods

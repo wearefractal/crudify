@@ -7,6 +7,7 @@ class Model extends hookify
     super
     @updateRoutes()
     @_middleware = []
+    @name = @_model.modelName
 
   updateRoutes: ->
     @routes = getRoutesFromModel @_model

@@ -36,13 +36,17 @@ class CRUD extends hookify
     @removePre 'handle', fn
     return @
 
-  _hookRoute: (path, app, model, route) ->
+  _hookRoute: (path, app, model, route) =>
     handler = require("./util/handlers/#{route.meta.type}") route
     p = (if path? then join(path,route.path) else route.path)
     
-    modelPre = (req, res, next) ->
+    checkExists = (req, res, next) =>
+      return unless @_models[model.name]?
+      next()
+
+    modelPre = (req, res, next) =>
       model.runPre 'handle', [req,res], next
-    modelPost = (req, res, next) ->
+    modelPost = (req, res, next) =>
       model.runPost 'handle', [req,res], next
     
     thisPre = (req, res, next) =>
@@ -55,7 +59,7 @@ class CRUD extends hookify
       next()
 
     for method, fn of handler
-      app[method] p, attachMeta, thisPre, modelPre, fn.bind(@), thisPost, modelPost
+      app[method] p, checkExists, attachMeta, thisPre, modelPre, fn.bind(@), thisPost, modelPost
     return @
 
   hook: (path, app) ->

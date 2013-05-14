@@ -11,14 +11,14 @@
       "coffee-script":"*",
       "require-directory":"*",
       "async":"*",
-      "hookify":"*"
+      "hookify":"*",
+      "mongoose":"*"
    },
    "devDependencies":{
       "mocha":"*",
       "should":"*",
       "request":"*",
-      "express":"*",
-      "mongoose":"*"
+      "express":"*"
    },
    "scripts":{
       "test":"mocha --compilers coffee:coffee-script"

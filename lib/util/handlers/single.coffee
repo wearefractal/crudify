@@ -4,16 +4,26 @@ sendResult = require '../sendResult'
 getAllPaths = require '../getAllPaths'
 filterDocument = require '../filterDocument'
 defaultPerms = require '../defaultPerms'
+async = require 'async'
 
 module.exports = (route) ->
   [Model] = route.meta.models
   out = {}
 
+  execQuery = (req, res, query, cb) ->
+    async.waterfall [
+      (done) => @runPre 'query', [req, res, query], done
+    ,
+      (done) => query.exec done
+    ,
+      (mod, done) => @runPost 'query', [req, res, query, mod], (err) -> done err, mod
+    ], cb
+
   out.get = (req, res, next) ->
     singleId = req.params[route.meta.primaryKey]
     query = Model.findById singleId
     query = extendQueryFromParams query, req.query
-    query.exec (err, mod) ->
+    execQuery.bind(@) req, res, query, (err, mod) ->
       return sendError res, err if err?
       return sendError res, "Not found", 404 unless mod?
       perms = (if mod.authorize then mod.authorize(req) else defaultPerms)
@@ -28,8 +38,8 @@ module.exports = (route) ->
     singleId = req.params[route.meta.primaryKey]
     query = Model.findById singleId
     query = extendQueryFromParams query, req.query
-    query.exec (err, mod) ->
-      return sendError res, err if err? 
+    execQuery.bind(@) req, res, query, (err, mod) ->
+      return sendError res, err if err?
       return sendError res, "Not found", 404 unless mod?
       perms = (if mod.authorize then mod.authorize(req) else defaultPerms)
       return sendError res, "Not authorized" unless perms.read is true
@@ -64,7 +74,7 @@ module.exports = (route) ->
     singleId = req.params[route.meta.primaryKey]
     query = Model.findById singleId
     query = extendQueryFromParams query, req.query
-    query.exec (err, mod) ->
+    execQuery.bind(@) req, res, query, (err, mod) ->
       return sendError res, err if err?
       return sendError res, "Not found", 404 unless mod?
       perms = (if mod.authorize then mod.authorize(req) else defaultPerms)
@@ -87,8 +97,7 @@ module.exports = (route) ->
   out.delete = (req, res, next) ->
     singleId = req.params[route.meta.primaryKey]
     query = Model.findById singleId
-    query = extendQueryFromParams query, req.query
-    query.exec (err, mod) ->
+    execQuery.bind(@) req, res, query, (err, mod) ->
       return sendError res, err if err?
       return sendError res, "Not found", 404 unless mod?
       perms = (if mod.authorize then mod.authorize(req) else defaultPerms)

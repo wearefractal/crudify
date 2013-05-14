@@ -39,6 +39,7 @@ class CRUD extends hookify
   _hookRoute: (path, app, model, route) ->
     handler = require("./util/handlers/#{route.meta.type}") route
     p = (if path? then join(path,route.path) else route.path)
+    
     modelPre = (req, res, next) ->
       model.runPre 'handle', [req,res], next
     modelPost = (req, res, next) ->
@@ -50,7 +51,7 @@ class CRUD extends hookify
       @runPost 'handle', [req,res], next
     
     for method, fn of handler
-      app[method] p, thisPre, modelPre, fn, thisPost, modelPost
+      app[method] p, thisPre, modelPre, fn.bind(@), thisPost, modelPost
     return @
 
   hook: (path, app) ->

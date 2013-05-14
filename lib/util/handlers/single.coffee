@@ -4,20 +4,11 @@ sendResult = require '../sendResult'
 getAllPaths = require '../getAllPaths'
 filterDocument = require '../filterDocument'
 defaultPerms = require '../defaultPerms'
-async = require 'async'
+execQuery = require '../execQuery'
 
 module.exports = (route) ->
   [Model] = route.meta.models
   out = {}
-
-  execQuery = (req, res, query, cb) ->
-    async.waterfall [
-      (done) => @runPre 'query', [req, res, query], done
-    ,
-      (done) => query.exec done
-    ,
-      (mod, done) => @runPost 'query', [req, res, query, mod], (err) -> done err, mod
-    ], cb
 
   out.get = (req, res, next) ->
     singleId = req.params[route.meta.primaryKey]

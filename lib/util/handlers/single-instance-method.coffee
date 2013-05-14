@@ -2,6 +2,7 @@ extendQueryFromParams = require '../extendQueryFromParams'
 sendError = require '../sendError'
 sendResult = require '../sendResult'
 defaultPerms = require '../defaultPerms'
+execQuery = require '../execQuery'
 
 module.exports = (route) ->
   [Model] = route.meta.models
@@ -12,7 +13,7 @@ module.exports = (route) ->
     singleId = req.params[route.meta.primaryKey]
     query = Model.findById singleId
     query = extendQueryFromParams query, req.query
-    query.exec (err, mod) ->
+    execQuery.bind(@) req, res, query, (err, mod) ->
       return sendError res, err if err?
       return sendError res, "Not found", 404 unless mod?
       perms = (if mod.authorize then mod.authorize(req) else defaultPerms)
@@ -26,7 +27,7 @@ module.exports = (route) ->
     singleId = req.params[route.meta.primaryKey]
     query = Model.findById singleId
     query = extendQueryFromParams query, req.query
-    query.exec (err, mod) ->
+    execQuery.bind(@) req, res, query, (err, mod) ->
       return sendError res, err if err?
       return sendError res, "Not found", 404 unless mod?
       perms = (if mod.authorize then mod.authorize(req) else defaultPerms)

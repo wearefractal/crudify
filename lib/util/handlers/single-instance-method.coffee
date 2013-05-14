@@ -17,7 +17,7 @@ module.exports = (route) ->
       return sendError res, err if err?
       return sendError res, "Not found", 404 unless mod?
       perms = (if mod.authorize then mod.authorize(req) else defaultPerms)
-      return sendError res, "Not authorized" unless perms.read is true
+      return sendError res, "Not authorized", 401 unless perms.read is true
       mod[handlerName] req, (err, dat) ->
         return sendError res, err if err?
         sendResult res, dat

@@ -19,7 +19,7 @@ module.exports = (route) ->
       return sendError res, err if err?
       return sendError res, "Not found", 404 unless mod?
       perms = (if mod.authorize then mod.authorize(req) else defaultPerms)
-      return sendError res, "Not authorized" unless perms.read is true
+      return sendError res, "Not authorized", 401 unless perms.read is true
       nMod = filterDocument req, mod
       return sendResult res, nMod
 
@@ -34,16 +34,16 @@ module.exports = (route) ->
       return sendError res, err if err?
       return sendError res, "Not found", 404 unless mod?
       perms = (if mod.authorize then mod.authorize(req) else defaultPerms)
-      return sendError res, "Not authorized" unless perms.read is true
-      return sendError res, "Not authorized" unless perms.write is true
+      return sendError res, "Not authorized", 401 unless perms.read is true
+      return sendError res, "Not authorized", 401 unless perms.write is true
       
       for k in getAllPaths Model
         if mod.schema.paths[k].options?.authorize?
           toCall = mod.schema.paths[k].options.authorize.bind mod
           perms = toCall req
           if req.body[k]? # they explicitly tried to PUT a change on a non-writable field
-            return sendError res, "Not authorized" unless perms.read is true
-            return sendError res, "Not authorized" unless perms.write is true
+            return sendError res, "Not authorized", 401 unless perms.read is true
+            return sendError res, "Not authorized", 401 unless perms.write is true
           continue unless perms.read is true
           continue unless perms.write is true
 
@@ -66,15 +66,15 @@ module.exports = (route) ->
       return sendError res, err if err?
       return sendError res, "Not found", 404 unless mod?
       perms = (if mod.authorize then mod.authorize(req) else defaultPerms)
-      return sendError res, "Not authorized" unless perms.read is true
-      return sendError res, "Not authorized" unless perms.write is true
+      return sendError res, "Not authorized", 401 unless perms.read is true
+      return sendError res, "Not authorized", 401 unless perms.write is true
       
       for k,v of req.body when (k in getAllPaths(Model))
         if mod.schema.paths[k].options?.authorize?
           toCall = mod.schema.paths[k].options.authorize.bind mod
           perms = toCall req
-          return sendError res, "Not authorized" unless perms.read is true
-          return sendError res, "Not authorized" unless perms.write is true
+          return sendError res, "Not authorized", 401 unless perms.read is true
+          return sendError res, "Not authorized", 401 unless perms.write is true
 
         mod.set k, v
 
@@ -89,9 +89,9 @@ module.exports = (route) ->
       return sendError res, err if err?
       return sendError res, "Not found", 404 unless mod?
       perms = (if mod.authorize then mod.authorize(req) else defaultPerms)
-      return sendError res, "Not authorized" unless perms.read is true
-      return sendError res, "Not authorized" unless perms.write is true
-      return sendError res, "Not authorized" unless perms.delete is true
+      return sendError res, "Not authorized", 401 unless perms.read is true
+      return sendError res, "Not authorized", 401 unless perms.write is true
+      return sendError res, "Not authorized", 401 unless perms.delete is true
       
       mod.remove (err) ->
         return sendError res, err if err?

@@ -85,7 +85,7 @@ describe 'crudify integration', ->
           hasRead: "false"
       request opt, (err, res, body) ->
         should.not.exist err
-        res.statusCode.should.equal 500
+        res.statusCode.should.equal 401
         should.exist body
         should.exist body.error
         should.exist body.error.message
@@ -215,7 +215,7 @@ describe 'crudify integration', ->
         
       request opt, (err, res, body) ->
         should.not.exist err
-        res.statusCode.should.equal 200
+        res.statusCode.should.equal 201
         should.exist body
         body.name.should.equal "New Guy"
         body.score.should.equal 0
@@ -288,7 +288,7 @@ describe 'crudify integration', ->
         
       request opt, (err, res, body) ->
         should.not.exist err
-        res.statusCode.should.equal 500
+        res.statusCode.should.equal 401
         should.exist body
         should.exist body.error
         should.exist body.error.message
@@ -340,7 +340,7 @@ describe 'crudify integration', ->
 
       request opt, (err, res, body) ->
         should.not.exist err
-        res.statusCode.should.equal 500
+        res.statusCode.should.equal 401
         should.exist body
         should.exist body.error
         should.exist body.error.message
@@ -358,7 +358,7 @@ describe 'crudify integration', ->
         
       request opt, (err, res, body) ->
         should.not.exist err
-        res.statusCode.should.equal 500
+        res.statusCode.should.equal 401
         should.exist body
         should.exist body.error
         should.exist body.error.message
@@ -374,7 +374,7 @@ describe 'crudify integration', ->
         
       request opt, (err, res, body) ->
         should.not.exist err
-        res.statusCode.should.equal 500
+        res.statusCode.should.equal 401
         should.exist body
         should.exist body.error
         should.exist body.error.message
@@ -425,7 +425,7 @@ describe 'crudify integration', ->
 
       request opt, (err, res, body) ->
         should.not.exist err
-        res.statusCode.should.equal 500
+        res.statusCode.should.equal 401
         should.exist body
         should.exist body.error
         should.exist body.error.message
@@ -443,7 +443,7 @@ describe 'crudify integration', ->
         
       request opt, (err, res, body) ->
         should.not.exist err
-        res.statusCode.should.equal 500
+        res.statusCode.should.equal 401
         should.exist body
         should.exist body.error
         should.exist body.error.message
@@ -461,7 +461,7 @@ describe 'crudify integration', ->
         
       request opt, (err, res, body) ->
         should.not.exist err
-        res.statusCode.should.equal 500
+        res.statusCode.should.equal 401
         should.exist body
         should.exist body.error
         should.exist body.error.message
@@ -494,7 +494,7 @@ describe 'crudify integration', ->
         
       request opt, (err, res, body) ->
         should.not.exist err
-        res.statusCode.should.equal 500
+        res.statusCode.should.equal 401
         should.exist body
         should.exist body.error
         should.exist body.error.message
@@ -511,7 +511,7 @@ describe 'crudify integration', ->
         
       request opt, (err, res, body) ->
         should.not.exist err
-        res.statusCode.should.equal 500
+        res.statusCode.should.equal 401
         should.exist body
         should.exist body.error
         should.exist body.error.message

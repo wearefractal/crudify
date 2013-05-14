@@ -21,7 +21,6 @@ class CRUD extends hookify
   unexpose: (modelName) ->
     throw new Error "modelName argument needs to be a string" unless typeof modelName is 'string'
     throw new Error "#{modelName} is not exposed" unless @_models[modelName]?
-    # TODO: actually unwire stuff
     delete @_models[modelName]
     return @
 
@@ -30,7 +29,11 @@ class CRUD extends hookify
     return @_models[modelName]
 
   use: (fn) ->
-    @_middleware.push fn
+    @pre 'handle', fn
+    return @
+
+  unuse: (fn) ->
+    @removePre 'handle', fn
     return @
 
   _hookRoute: (path, app, model, route) ->

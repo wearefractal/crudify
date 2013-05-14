@@ -12,4 +12,12 @@ class Model extends hookify
     @routes = getRoutesFromModel @_model
     return @
 
+  use: (fn) ->
+    @pre 'handle', fn
+    return @
+
+  unuse: (fn) ->
+    @removePre 'handle', fn
+    return @
+
 module.exports = Model

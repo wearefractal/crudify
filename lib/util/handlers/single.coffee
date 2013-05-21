@@ -11,11 +11,11 @@ module.exports = (route) ->
   [Model] = route.meta.models
   out = {}
 
-  out.get = (req, res, next) ->
+  out.get = (model, req, res, next) ->
     singleId = req.params[route.meta.primaryKey]
     query = Model.findById singleId
     query = extendQueryFromParams query, req.query
-    execQuery.bind(@) req, res, query, (err, mod) ->
+    execQuery.bind(@) model, req, res, query, (err, mod) ->
       return sendError res, err if err?
       return sendError res, "Not found", 404 unless mod?
       perms = (if mod.authorize then mod.authorize(req) else defaultPerms)
@@ -23,14 +23,14 @@ module.exports = (route) ->
       nMod = filterDocument req, mod
       return sendResult res, nMod
 
-  out.put = (req, res, next) ->
+  out.put = (model, req, res, next) ->
     return sendError res, new Error("Invalid body") unless typeof req.body is 'object'
     delete req.body._id
     delete req.body.__v
     singleId = req.params[route.meta.primaryKey]
     query = Model.findById singleId
     query = extendQueryFromParams query, req.query
-    execQuery.bind(@) req, res, query, (err, mod) ->
+    execQuery.bind(@) model, req, res, query, (err, mod) ->
       return sendError res, err if err?
       return sendError res, "Not found", 404 unless mod?
       perms = (if mod.authorize then mod.authorize(req) else defaultPerms)
@@ -55,14 +55,14 @@ module.exports = (route) ->
         return sendError res, err if err?
         return sendResult res, mod
 
-  out.patch = (req, res, next) ->
+  out.patch = (model, req, res, next) ->
     return sendError res, new Error("Invalid body") unless typeof req.body is 'object'
     delete req.body._id
     delete req.body.__v
     singleId = req.params[route.meta.primaryKey]
     query = Model.findById singleId
     query = extendQueryFromParams query, req.query
-    execQuery.bind(@) req, res, query, (err, mod) ->
+    execQuery.bind(@) model, req, res, query, (err, mod) ->
       return sendError res, err if err?
       return sendError res, "Not found", 404 unless mod?
       perms = (if mod.authorize then mod.authorize(req) else defaultPerms)
@@ -82,10 +82,10 @@ module.exports = (route) ->
         return sendError res, err if err?
         return sendResult res, mod
 
-  out.delete = (req, res, next) ->
+  out.delete = (model, req, res, next) ->
     singleId = req.params[route.meta.primaryKey]
     query = Model.findById singleId
-    execQuery.bind(@) req, res, query, (err, mod) ->
+    execQuery.bind(@) model, req, res, query, (err, mod) ->
       return sendError res, err if err?
       return sendError res, "Not found", 404 unless mod?
       perms = (if mod.authorize then mod.authorize(req) else defaultPerms)

@@ -9,11 +9,11 @@ module.exports = (route) ->
   handlerName = route.meta.handlerName
   out = {}
   
-  doIt = (req, res, next) ->
+  doIt = (model, req, res, next) ->
     singleId = req.params[route.meta.primaryKey]
     query = Model.findById singleId
     query = extendQueryFromParams query, req.query
-    execQuery.bind(@) req, res, query, (err, mod) ->
+    execQuery.bind(@) model, req, res, query, (err, mod) ->
       return sendError res, err if err?
       return sendError res, "Not found", 404 unless mod?
       perms = (if mod.authorize then mod.authorize(req) else defaultPerms)

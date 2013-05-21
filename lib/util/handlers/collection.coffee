@@ -8,17 +8,17 @@ module.exports = (route) ->
   [Model] = route.meta.models
   out = {}
     
-  out.get = (req, res, next) ->
+  out.get = (model, req, res, next) ->
     perms = (if Model.authorize then Model.authorize(req) else defaultPerms)
     return sendError res, "Not authorized", 401 unless perms.read is true
     query = Model.find()
     query = extendQueryFromParams query, req.query
-    execQuery.bind(@) req, res, query, (err, data) ->
+    execQuery.bind(@) model, req, res, query, (err, data) ->
       return sendError res, err if err?
       return sendError res, "Not found", 404 unless data?
       return sendResult res, data
 
-  out.post = (req, res, next) ->
+  out.post = (model, req, res, next) ->
     return sendError res, new Error("Invalid body") unless typeof req.body is 'object'
     perms = (if Model.authorize then Model.authorize(req) else defaultPerms)
     return sendError res, "Not authorized", 401 unless perms.read is true

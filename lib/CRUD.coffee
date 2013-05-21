@@ -8,7 +8,6 @@ class CRUD extends hookify
     super
     throw new Error "Missing db argument" unless @db?
     @_models = {}
-    @_middleware = []
 
   expose: (modelName) ->
     throw new Error "modelName argument needs to be a string" unless typeof modelName is 'string'
@@ -59,7 +58,10 @@ class CRUD extends hookify
       next()
 
     for method, fn of handler
-      app[method] p, checkExists, attachMeta, thisPre, modelPre, fn.bind(@), thisPost, modelPost
+      app[method] p, checkExists, attachMeta,
+        thisPre, modelPre, 
+        fn.bind(@, model), 
+        thisPost, modelPost
     return @
 
   hook: (path, app) ->

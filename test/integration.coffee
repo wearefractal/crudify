@@ -7,7 +7,7 @@ require 'mocha'
 db = require './fixtures/connection'
 User = db.model 'User'
 crud = crudify db
-crud.expose 'User'
+userMod = crud.expose 'User'
 
 PORT = process.env.PORT or 9001
 
@@ -19,9 +19,20 @@ crud.pre 'handle', (req, res, next) ->
   should.exist res
   next()
 
-crud.get('User').pre 'handle', (req, res, next) ->
+userMod.pre 'handle', (req, res, next) ->
   should.exist req
   should.exist res
+  next()
+
+userMod.pre 'query', (req, res, query, next) ->
+  should.exist req
+  should.exist res
+  next()
+
+userMod.post 'query', (req, res, query, result, next) ->
+  should.exist req
+  should.exist res
+  should.exist result
   next()
 
 crud.hook app

@@ -2,11 +2,15 @@ async = require 'async'
 
 # Util for executing query with hooks
 
-module.exports = (req, res, query, cb) ->
+module.exports = (model, req, res, query, cb) ->
   async.waterfall [
     (done) => @runPre 'query', [req, res, query], done
   ,
+    (done) => model.runPre 'query', [req, res, query], done
+  ,
     (done) => query.exec done
   ,
-    (mod, done) => @runPost 'query', [req, res, query, mod], (err) -> done err, mod
+    (result, done) => model.runPost 'query', [req, res, query, result], (err) -> done err, result
+  ,
+    (result, done) => @runPost 'query', [req, res, query, result], (err) -> done err, result
   ], cb

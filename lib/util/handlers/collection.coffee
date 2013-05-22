@@ -3,6 +3,7 @@ sendError = require '../sendError'
 sendResult = require '../sendResult'
 defaultPerms = require '../defaultPerms'
 execQuery = require '../execQuery'
+filterDocument = require '../filterDocument'
 
 module.exports = (route) ->
   [Model] = route.meta.models
@@ -16,7 +17,8 @@ module.exports = (route) ->
     execQuery.bind(@) model, req, res, query, (err, data) =>
       return sendError res, err if err?
       return sendError res, "Not found", 404 unless data?
-      return sendResult.bind(@) model, req, res, data
+      nData = (filterDocument(req, doc) for doc in data)
+      return sendResult.bind(@) model, req, res, nData
 
   out.post = (model, req, res, next) ->
     return sendError res, new Error("Invalid body") unless typeof req.body is 'object'
@@ -26,10 +28,11 @@ module.exports = (route) ->
     
     delete req.body._id
     delete req.body.__v
-    # TODO: call hooks here
+
     Model.create req.body, (err, data) =>
       return sendError res, err if err?
-      sendResult.bind(@) model, req, res, data, 201
+      nData = filterDocument req, data
+      sendResult.bind(@) model, req, res, nData, 201
       return
 
   return out

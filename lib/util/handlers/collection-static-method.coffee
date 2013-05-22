@@ -10,9 +10,9 @@ module.exports = (route) ->
   doIt = (model, req, res, next) ->
     perms = (if Model.authorize then Model.authorize(req) else defaultPerms)
     return sendError res, "Not authorized", 401 unless perms.read is true
-    Model[handlerName] req, (err, data) ->
+    Model[handlerName] req, (err, data) =>
       return sendError res, err if err?
-      sendResult res, data
+      sendResult.bind(@) model, req, res, data
 
   out.get = doIt
   out.post = doIt

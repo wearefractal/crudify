@@ -13,10 +13,10 @@ module.exports = (route) ->
     return sendError res, "Not authorized", 401 unless perms.read is true
     query = Model.find()
     query = extendQueryFromParams query, req.query
-    execQuery.bind(@) model, req, res, query, (err, data) ->
+    execQuery.bind(@) model, req, res, query, (err, data) =>
       return sendError res, err if err?
       return sendError res, "Not found", 404 unless data?
-      return sendResult res, data
+      return sendResult.bind(@) model, req, res, data
 
   out.post = (model, req, res, next) ->
     return sendError res, new Error("Invalid body") unless typeof req.body is 'object'
@@ -27,9 +27,9 @@ module.exports = (route) ->
     delete req.body._id
     delete req.body.__v
     # TODO: call hooks here
-    Model.create req.body, (err, data) ->
+    Model.create req.body, (err, data) =>
       return sendError res, err if err?
-      sendResult res, data, 201
+      sendResult.bind(@) model, req, res, data, 201
       return
 
   return out

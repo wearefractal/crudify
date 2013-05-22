@@ -2,7 +2,6 @@
 
 - Support populate via path (also includes recursive routes)
 - Filter all models by authorization on collection methods
-- Add middleware hook for http response that allows transforms
 - More tests
 - Set the default skip/limit to 0/20 for all collection views [ccowan]
 - Have a way to overide the collection query (Model.find()) to use a static method from the model [ccowan]

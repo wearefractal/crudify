@@ -7,3 +7,4 @@
 - Specify query restrictions like max limit, max specificity, etc.
 - Allow people to specify which fields are selected via querystring
 - Allow autopopulate on model
+- friendly event names and middleware hooks (user created, user modified, user removed, etc.)

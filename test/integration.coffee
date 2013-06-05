@@ -41,10 +41,12 @@ app.listen PORT
 tom =
   name: "Tom Johnson"
   score: 100
+  time: 30
 
 mike =
   name: "Mike Johnson"
   score: 50
+  time: 45
 
 TomModel = null
 MikeModel = null
@@ -174,6 +176,21 @@ describe 'crudify integration', ->
         Array.isArray(body).should.equal true
         body.length.should.equal 2
         (body[0].score >= body[1].score).should.equal true
+        done()
+
+    it 'should return all users with sort and populate', (done) ->
+      opt =
+        method: "GET"
+        json: true
+        uri: "http://localhost:#{PORT}/users?populate=bestFriend&sort=-bestFriend.score"
+        
+      request opt, (err, res, body) ->
+        should.not.exist err
+        res.statusCode.should.equal 200
+        should.exist body
+        Array.isArray(body).should.equal true
+        body.length.should.equal 2
+        (body[0].bestFriend.score >= body[1].bestFriend.score).should.equal true
         done()
 
     it 'should return all users with populate of one field', (done) ->

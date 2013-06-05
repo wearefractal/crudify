@@ -12,7 +12,7 @@ module.exports = (route) ->
   doIt = (model, req, res, next) ->
     singleId = req.params[route.meta.primaryKey]
     query = Model.findById singleId
-    query = extendQueryFromParams query, req.query
+    query = extendQueryFromParams query, req.query, route.meta
     execQuery.bind(@) model, req, res, query, (err, mod) =>
       return sendError res, err if err?
       return sendError res, "Not found", 404 unless mod?

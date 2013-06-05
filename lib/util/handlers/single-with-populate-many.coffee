@@ -19,7 +19,7 @@ module.exports = (route) ->
     return sendError res, "Invalid ObjectId" unless isObjectId String req.body._id
     singleId = req.params[route.meta.primaryKey]
     query = Model.findById singleId
-    query = extendQueryFromParams query, req.query
+    query = extendQueryFromParams query, req.query, route.meta
     query.populate route.meta.field
 
     execQuery.bind(@) model, req, res, query, (err, mod) =>

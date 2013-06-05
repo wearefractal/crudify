@@ -10,4 +10,4 @@
 - friendly event names and middleware hooks (user created, user modified, user removed, etc.)
 - delete to remove items from a nested array of relationships (/users/:id/friends)
 - more tests for querystring options to populated relationships
-- ignore certain querystring params depending on the situation (select, limit, where, etc.)
+- test to check ignore certain querystring params depending on the situation (select, limit, where, etc.)

@@ -5,14 +5,14 @@ require 'mocha'
 db = require './fixtures/connection'
 User = db.model 'User'
 
-describe 'extendQueryFromParams()', ->
+describe 'formatParams()', ->
   describe 'flags', ->
     it 'should create flags object', (done) ->
       query = User.find()
       query.where('name').in(["Tom","Rob"])
       params = {}
 
-      query = util.extendQueryFromParams query, params
+      query = util.formatParams params, User
       should.exist query.flags
       done()
 
@@ -23,9 +23,9 @@ describe 'extendQueryFromParams()', ->
       params =
         skip: "10"
 
-      query = util.extendQueryFromParams query, params
-      should.exist query.options.skip
-      query.options.skip.should.equal 10
+      query = util.formatParams params, User
+      should.exist query.skip
+      query.skip.should.equal 10
       done()
 
     it 'should work with valid number', (done) ->
@@ -34,9 +34,9 @@ describe 'extendQueryFromParams()', ->
       params =
         skip: 10
 
-      query = util.extendQueryFromParams query, params
-      should.exist query.options.skip
-      query.options.skip.should.equal 10
+      query = util.formatParams params, User
+      should.exist query.skip
+      query.skip.should.equal 10
       done()
 
     it 'should ignore invalid number', (done) ->
@@ -45,8 +45,8 @@ describe 'extendQueryFromParams()', ->
       params =
         skip: "blah"
 
-      query = util.extendQueryFromParams query, params
-      should.not.exist query.options.skip
+      query = util.formatParams params, User
+      should.not.exist query.skip
       done()
 
     it 'should ignore 0 number', (done) ->
@@ -55,8 +55,8 @@ describe 'extendQueryFromParams()', ->
       params =
         skip: 0
 
-      query = util.extendQueryFromParams query, params
-      should.not.exist query.options.skip
+      query = util.formatParams params, User
+      should.not.exist query.skip
       done()
 
   describe 'limit', ->
@@ -66,9 +66,9 @@ describe 'extendQueryFromParams()', ->
       params =
         limit: "10"
 
-      query = util.extendQueryFromParams query, params
-      should.exist query.options.limit
-      query.options.limit.should.equal 10
+      query = util.formatParams params, User
+      should.exist query.limit
+      query.limit.should.equal 10
       done()
 
     it 'should work with valid number', (done) ->
@@ -77,9 +77,9 @@ describe 'extendQueryFromParams()', ->
       params =
         limit: 10
 
-      query = util.extendQueryFromParams query, params
-      should.exist query.options.limit
-      query.options.limit.should.equal 10
+      query = util.formatParams params, User
+      should.exist query.limit
+      query.limit.should.equal 10
       done()
 
     it 'should ignore invalid number', (done) ->
@@ -88,8 +88,8 @@ describe 'extendQueryFromParams()', ->
       params =
         limit: "blah"
 
-      query = util.extendQueryFromParams query, params
-      should.not.exist query.options.limit
+      query = util.formatParams params, User
+      should.not.exist query.limit
       done()
 
     it 'should ignore 0 number', (done) ->
@@ -98,8 +98,8 @@ describe 'extendQueryFromParams()', ->
       params =
         limit: 0
 
-      query = util.extendQueryFromParams query, params
-      should.not.exist query.options.limit
+      query = util.formatParams params, User
+      should.not.exist query.limit
       done()
 
   describe 'sort', ->
@@ -109,9 +109,9 @@ describe 'extendQueryFromParams()', ->
       params =
         sort: "score"
 
-      query = util.extendQueryFromParams query, params
-      should.exist query.options.sort
-      query.options.sort.should.eql [['score',1]]
+      query = util.formatParams params, User
+      should.exist query.sort
+      query.sort.should.eql ['score']
       done()
 
     it 'should work with valid field name and - operator', (done) ->
@@ -120,9 +120,9 @@ describe 'extendQueryFromParams()', ->
       params =
         sort: "-score"
 
-      query = util.extendQueryFromParams query, params
-      should.exist query.options.sort
-      query.options.sort.should.eql [['score',-1]]
+      query = util.formatParams params, User
+      should.exist query.sort
+      query.sort.should.eql ['-score']
       done()
 
     it 'should ignore invalid field name', (done) ->
@@ -131,8 +131,8 @@ describe 'extendQueryFromParams()', ->
       params =
         sort: "blah"
 
-      query = util.extendQueryFromParams query, params
-      should.not.exist query.options.sort
+      query = util.formatParams params, User
+      query.sort.should.eql []
       done()
 
     it 'should ignore invalid field name with - operator', (done) ->
@@ -141,8 +141,8 @@ describe 'extendQueryFromParams()', ->
       params =
         sort: "-blah"
 
-      query = util.extendQueryFromParams query, params
-      should.not.exist query.options.sort
+      query = util.formatParams params, User
+      query.sort.should.eql []
       done()
 
   describe 'populate', ->
@@ -152,9 +152,9 @@ describe 'extendQueryFromParams()', ->
       params =
         populate: "bestFriend"
 
-      query = util.extendQueryFromParams query, params
-      should.exist query.options.populate
-      should.exist query.options.populate.bestFriend
+      query = util.formatParams params, User
+      should.exist query.populate
+      query.populate.should.eql ["bestFriend"]
       done()
 
     it 'should ignore invalid field name', (done) ->
@@ -163,8 +163,8 @@ describe 'extendQueryFromParams()', ->
       params =
         populate: "blah"
 
-      query = util.extendQueryFromParams query, params
-      should.not.exist query.options.populate
+      query = util.formatParams params, User
+      query.populate.should.eql []
       done()
 
   describe 'where', ->
@@ -174,11 +174,11 @@ describe 'extendQueryFromParams()', ->
         name: "Tom"
         score: 100
 
-      query = util.extendQueryFromParams query, params
-      should.exist query._conditions
-      query._conditions.should.eql
+      query = util.formatParams params, User
+      should.exist query.conditions
+      query.conditions.should.eql
         name: "Tom"
-        score:100
+        score: 100
       done()
 
     it 'should ignore invalid field names from valid', (done) ->
@@ -187,9 +187,9 @@ describe 'extendQueryFromParams()', ->
         blah: "Tom"
         score: 100
 
-      query = util.extendQueryFromParams query, params
-      should.exist query._conditions
-      query._conditions.should.eql score: 100
+      query = util.formatParams params, User
+      should.exist query.conditions
+      query.conditions.should.eql score: 100
       done()
 
     it 'should ignore invalid field names completely', (done) ->
@@ -198,22 +198,8 @@ describe 'extendQueryFromParams()', ->
         blah: "Tom"
         zzz: 100
 
-      query = util.extendQueryFromParams query, params
-      should.exist query._conditions
-      should.not.exist query._conditions.blah
-      should.not.exist query._conditions.zzz
-      done()
-
-  describe 'misc', ->
-    it 'should work with all', (done) ->
-      query = User.find()
-      query.where('name').in(["Tom","Rob"])
-      params =
-        bestFriend: "someId"
-        invalidShit: "nothing"
-        offset: "3"
-        limit: "10"
-        sort: "score"
-
-      util.extendQueryFromParams query, params
+      query = util.formatParams params, User
+      should.exist query.conditions
+      should.not.exist query.conditions.blah
+      should.not.exist query.conditions.zzz
       done()

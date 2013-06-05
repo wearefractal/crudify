@@ -8,4 +8,4 @@
 - Allow people to specify which fields are selected via querystring
 - Allow autopopulate on model
 - friendly event names and middleware hooks (user created, user modified, user removed, etc.)
-- PUT/POST to add items to a nested array of relationships (/users/:id/friends)
+- delete to remove items from a nested array of relationships (/users/:id/friends)

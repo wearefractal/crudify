@@ -12,7 +12,7 @@ userMod = crud.expose 'User'
 PORT = process.env.PORT or 9001
 
 app = express()
-app.use express.json()
+app.use express.bodyParser()
 
 crud.pre 'handle', (req, res, next) ->
   should.exist req
@@ -58,9 +58,11 @@ beforeEach (done) ->
     User.create mike, (err, doc) ->
       return done err if err?
       MikeModel = doc
-      TomModel.friends.push MikeModel
+
+      TomModel.friends.push String MikeModel._id
+      MikeModel.friends.push String TomModel._id
+
       TomModel.set 'bestFriend', MikeModel
-      MikeModel.friends.push TomModel
       MikeModel.set 'bestFriend', TomModel
 
       TomModel.save (err) ->
@@ -547,7 +549,6 @@ describe 'crudify integration', ->
         done()
 
         
-  ###
   describe 'GET /users/:id/bestFriend', ->
     it 'should return populated friend', (done) ->
       opt =
@@ -563,26 +564,27 @@ describe 'crudify integration', ->
         body.name.should.equal MikeModel.name
         body.score.should.equal MikeModel.score
         done()
+  
+  describe 'POST /users/:id/friends', ->
 
-  describe 'PUT /users/:id/bestFriend', ->
-    it 'should modify the dbref', (done) ->
+    # Mike already has Tom as a friend so he will be duped in the list
+    it 'should add friend to the list', (done) ->
       opt =
-        method: "PUT"
-        body: String(MikeModel._id)
-        uri: "http://localhost:#{PORT}/users/#{TomModel._id}/bestFriend"
-      
+        method: "POST"
+        json:
+          _id: String(TomModel._id)
+        uri: "http://localhost:#{PORT}/users/#{MikeModel._id}/friends"
+        
       request opt, (err, res, body) ->
-        console.log body
         should.not.exist err
         res.statusCode.should.equal 200
         should.exist body
-        should.exist body.name
-        body.name.should.equal TomModel.name
-        body.score.should.equal TomModel.score
-        body.bestFriend.should.equal String MikeModel._id
+        Array.isArray(body).should.equal true
+        body.length.should.equal 2
+        body[0]._id.should.equal String TomModel._id
+        body[1]._id.should.equal String TomModel._id
         done()
-  ###
-  
+
   describe 'GET /users/:id/findWithSameName', ->
     it 'should return user', (done) ->
       opt =

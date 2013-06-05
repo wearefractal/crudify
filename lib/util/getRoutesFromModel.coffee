@@ -53,4 +53,50 @@ module.exports = (model) ->
         primaryKey: primaryKey
       path: "/#{collectionName}/:#{primaryKey}/#{name}"
 
+  # sub-items
+  toPopulate = getPopulatesFromModel model
+  for path in toPopulate
+    fieldName = path.name
+    actualModel = model.db.model path.modelName
+    nestedModelName = actualModel.modelName
+    secondaryKey = "#{fieldName}#{nestedModelName}Id"
+
+    if path.single
+      # GET returns the populated item
+      # PUT replaces the DBRef with another
+      # DELETE removes the DBRef
+      routes.push
+        meta:
+          type: "single-with-populate"
+          models: [model, actualModel]
+          field: fieldName
+          primaryKey: primaryKey
+        methods: ["get"]
+        path: "/#{collectionName}/:#{primaryKey}/#{fieldName}"
+      continue
+
+    if path.plural
+      # POST adds a new DBRef to the list
+      routes.push
+        meta:
+          type: "single-with-populate-many"
+          models: [model, actualModel]
+          field: fieldName
+          primaryKey: primaryKey
+        methods: ["post"]
+        path: "/#{collectionName}/:#{primaryKey}/#{fieldName}"
+
+      # DELETE will delete the DBRef from the list
+      ###
+      routes.push
+        meta:
+          type: "single-with-populate-many"
+          models: [model, actualModel]
+          field: fieldName
+          primaryKey: primaryKey
+          secondaryKey: secondaryKey
+        methods: ["delete"]
+        path: "/#{collectionName}/:#{primaryKey}/#{fieldName}/:#{secondaryKey}"
+      ###
+      
   return routes

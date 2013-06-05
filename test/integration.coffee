@@ -564,7 +564,52 @@ describe 'crudify integration', ->
         body.name.should.equal MikeModel.name
         body.score.should.equal MikeModel.score
         done()
-  
+
+  describe 'GET /users/:id/friends', ->
+    it 'should return populated friends list', (done) ->
+      opt =
+        method: "GET"
+        json: true
+        uri: "http://localhost:#{PORT}/users/#{TomModel._id}/friends"
+        
+      request opt, (err, res, body) ->
+        should.not.exist err
+        res.statusCode.should.equal 200
+        should.exist body
+        Array.isArray(body).should.equal true
+        body.length.should.equal 1
+        body[0]._id.should.equal String MikeModel._id
+        done()
+
+    it 'should return populated friends list with where condition', (done) ->
+      opt =
+        method: "GET"
+        json: true
+        uri: "http://localhost:#{PORT}/users/#{TomModel._id}/friends?name=Todd"
+        
+      request opt, (err, res, body) ->
+        should.not.exist err
+        res.statusCode.should.equal 200
+        should.exist body
+        Array.isArray(body).should.equal true
+        body.length.should.equal 0
+        done()
+
+    it 'should return populated friends list with where condition that validates', (done) ->
+      opt =
+        method: "GET"
+        json: true
+        uri: "http://localhost:#{PORT}/users/#{TomModel._id}/friends?name=#{MikeModel.name}"
+        
+      request opt, (err, res, body) ->
+        should.not.exist err
+        res.statusCode.should.equal 200
+        should.exist body
+        Array.isArray(body).should.equal true
+        body.length.should.equal 1
+        body[0].name.should.equal MikeModel.name
+        done()
+
   describe 'POST /users/:id/friends', ->
 
     # Mike already has Tom as a friend so he will be duped in the list

@@ -1,61 +1,26 @@
-hasField = require './hasField'
+cloneQuery = require './cloneQuery'
+formatParams = require './formatParams'
 
 reserved = ["skip","limit","sort","populate"]
 
-validArg = (v) -> v?
-validNumber = (v) -> validArg(v) and typeof(v) in ["number","string"] and !isNaN(v)
-validField = (v) -> validArg(v) and typeof(v) is 'string' and v.length > 0
-isTrue = (v) -> (v is true) or (v is 'true')
-getField = (v) ->
-  return v[1...] if (v[0] is '-')
-  return v
+module.exports = (origQuery, origParams={}, parentField) ->
+  query = cloneQuery origQuery
+  params = formatParams origParams, query.model
 
-###
-skip can be a number or string of a number greater than 0
-limit can be a number or string of a number greater than 0
-sort can be a field name optionally prefixed with + or - to set sort order
-populate can be a field name
-###
-
-module.exports = (query, params={}) ->
-  query.flags ?= {}
-
-  # check for our standard params
-
-  if validNumber params.skip
-    skip = parseInt params.skip
-    query.skip skip if skip > 0 # dont bother with jokers
-
-  if validNumber params.limit
-    limit = parseInt params.limit
-    query.limit limit if limit > 0 # dont bother with jokers
-
-  # Sort by field
-  sortField = (field) ->
-    if validField field
-      actualField = getField field
-      if hasField query.model, actualField
-        query.sort field
-
-  if Array.isArray params.sort
-    sortField f for f in params.sort
+  if parentField?
+    query.populate
+      path: parentField
+      match: params.conditions
+      #options: query.options
+    query.populate "#{parentField}.#{field}" for field in params.populate if params.populate?
+    
   else
-    sortField params.sort
+    if query.op isnt 'findOne'
+      query.skip params.skip if params.skip?
+      query.limit params.limit if params.limit?
+      query.where k, v for k,v of params.conditions if params.conditions?
 
-  # Populate field
-  popField = (field) ->
-    if validField field
-      actualField = getField field
-      if hasField query.model, actualField
-        query.populate field
-
-  if Array.isArray params.populate
-    popField f for f in params.populate
-  else
-    popField params.populate
-
-  # .where() all unreserved query params that are also model fields
-  for name, val of params when !(name in reserved) and validField(name) and hasField(query.model, name)
-    if validArg val
-      query.where name, val 
+    query.sort field for field in params.sort if params.sort?
+    query.populate field for field in params.populate if params.populate?
+  
   return query

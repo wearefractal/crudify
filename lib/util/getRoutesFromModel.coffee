@@ -61,19 +61,15 @@ module.exports = (model) ->
     nestedModelName = actualModel.modelName
     secondaryKey = "#{fieldName}#{nestedModelName}Id"
 
-    if path.single
-      # GET returns the populated item
-      # PUT replaces the DBRef with another
-      # DELETE removes the DBRef
-      routes.push
-        meta:
-          type: "single-with-populate"
-          models: [model, actualModel]
-          field: fieldName
-          primaryKey: primaryKey
-        methods: ["get"]
-        path: "/#{collectionName}/:#{primaryKey}/#{fieldName}"
-      continue
+    # GET returns the populated field
+    routes.push
+      meta:
+        type: "single-with-populate"
+        models: [model, actualModel]
+        field: fieldName
+        primaryKey: primaryKey
+      methods: ["get"]
+      path: "/#{collectionName}/:#{primaryKey}/#{fieldName}"
 
     if path.plural
       # POST adds a new DBRef to the list
@@ -98,5 +94,5 @@ module.exports = (model) ->
         methods: ["delete"]
         path: "/#{collectionName}/:#{primaryKey}/#{fieldName}/:#{secondaryKey}"
       ###
-      
+
   return routes

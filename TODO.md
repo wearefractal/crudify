@@ -11,3 +11,4 @@
 - delete to remove items from a nested array of relationships (/users/:id/friends)
 - more tests for querystring options to populated relationships
 - test to check ignore certain querystring params depending on the situation (select, limit, where, etc.)
+- Properly respond to OPTIONS with endpoint meta info (schema, accepted content-types, etc. see https://github.com/wearefractal/crudify/issues/3)

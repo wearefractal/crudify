@@ -16,3 +16,4 @@
 - Strip _v (or versionKey as specified in db config) from incoming bodies and outgoing responses
 - Support TRACE requests
 - Figure out a cleaner way to attach authorize to instance/collection
+- PUT single-with-populate many should add an existing record, POST should create and add

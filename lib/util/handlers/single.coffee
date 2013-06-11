@@ -97,4 +97,6 @@ module.exports = (route) ->
         return sendError res, err if err?
         return sendResult.bind(@) model, req, res, mod
 
+  #out.options = (model, req, res, next) ->
+
   return out

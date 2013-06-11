@@ -40,3 +40,25 @@ describe 'crudify reflection/meta info', ->
           should.exist route.type
           should.exist route.methods
         done()
+
+  describe 'OPTIONS /users', ->
+    it 'should return meta information', (done) ->
+      opt =
+        method: "OPTIONS"
+        json: true
+        uri: "http://localhost:#{PORT}/users"
+        
+      request opt, (err, res, body) ->
+        should.not.exist err
+        res.statusCode.should.equal 200
+        should.exist body
+        should.exist body.name
+        body.name.should.equal 'users'
+        should.exist body.routes
+        for route in body.routes
+          should.exist route.url
+          should.exist route.type
+          should.exist route.methods
+
+        should.exist body.schema
+        done()

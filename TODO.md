@@ -1,6 +1,7 @@
 ## TODO for 0.1
 
-- Support populate via path (also includes recursive routes)
+- Think about doing recursive routes for relationships
+- Convert as much logic as possible into middleware pieces
 - More tests
 - Set the default skip/limit to 0/20 for all collection views [ccowan]
 - Have a way to overide the collection query (Model.find()) to use a static method from the model [ccowan]

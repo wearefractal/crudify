@@ -2,6 +2,8 @@ getPopulatesFromModel = require "./getPopulatesFromModel"
 getStaticsFromModel = require "./getStaticsFromModel"
 getInstanceMethodsFromModel = require "./getInstanceMethodsFromModel"
 
+reserved = ['authorize']
+
 module.exports = (model) ->
   routes = []
   collectionName = model.collection.name
@@ -16,17 +18,19 @@ module.exports = (model) ->
     meta:
       type: "collection"
       models: [model]
+    methods: ["post","get"]
     path: "/#{collectionName}"
 
   # static methods
   statics = getStaticsFromModel model
-  for name, fn of statics
+  for name, fn of statics when !(name in reserved)
     routes.push
       meta:
         type: "collection-static-method"
         models: [model]
         handlerName: name
         handler: fn
+      methods: ["post","get"]
       path: "/#{collectionName}/#{name}"
       
   # specific item
@@ -39,11 +43,12 @@ module.exports = (model) ->
       type: "single"
       models: [model]
       primaryKey: primaryKey
+    methods: ["get","put","patch","delete"]
     path: "/#{collectionName}/:#{primaryKey}"
 
   # instance methods
   instMethods = getInstanceMethodsFromModel model
-  for name, fn of instMethods
+  for name, fn of instMethods when !(name in reserved)
     routes.push
       meta:
         type: "single-instance-method"
@@ -51,6 +56,7 @@ module.exports = (model) ->
         handlerName: name
         handler: fn
         primaryKey: primaryKey
+      methods: ["post","get"]
       path: "/#{collectionName}/:#{primaryKey}/#{name}"
 
   # sub-items

@@ -64,6 +64,24 @@ class CRUD extends hookify
         thisPost, modelPost
     return @
 
+  _sendMeta: (req, res, next) =>
+    out = collections: []
+
+    for name, model of @_models
+      nRoute =
+        name: model._model.collection.name
+        routes: []
+
+      for route in model.routes
+        nRoute.routes.push
+          type: route.meta.type
+          methods: route.methods
+          url: route.path
+
+      out.collections.push nRoute
+
+    res.json 200, out
+
   hook: (path, app) ->
     if typeof path isnt 'string'
       app = path
@@ -72,6 +90,9 @@ class CRUD extends hookify
     for name, model of @_models
       for route in model.routes
         @_hookRoute path, app, model, route
+
+    rootPath = (if path? then join(path,"/") else "/")
+    app.get rootPath, @_sendMeta
     return @
 
 module.exports = CRUD

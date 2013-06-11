@@ -1,0 +1,7 @@
+- scaffolding cli
+- endpoint enumeration from meta
+- documentation generation from meta
+- web ui for generating schemas
+- backbone plugin
+- dermis plugin
+- angular plugin

@@ -12,3 +12,4 @@
 - more tests for querystring options to populated relationships
 - test to check ignore certain querystring params depending on the situation (select, limit, where, etc.)
 - Properly respond to OPTIONS with endpoint meta info (schema, accepted content-types, etc. see https://github.com/wearefractal/crudify/issues/3)
+- Strip _v (or versionKey as specified in db config) from incoming bodies and outgoing responses

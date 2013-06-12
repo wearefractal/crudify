@@ -11,7 +11,7 @@ getDefault = require '../getDefault'
 isObjectId = (str) -> str? and (str.length is 12 or str.length is 24)
 
 module.exports = (route) ->
-  [Model] = route.meta.models
+  [Model, SubModel] = route.meta.models
   out = {}
 
   out.post = (model, req, res, next) ->
@@ -31,7 +31,7 @@ module.exports = (route) ->
       delete req.body._id
       delete req.body.__v
 
-      Model.create req.body, (err, data) =>
+      SubModel.create req.body, (err, data) =>
         return sendError res, err if err?
         nMod[route.meta.field].push data
         nMod.save (err, resMod) =>

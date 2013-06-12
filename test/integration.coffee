@@ -610,12 +610,12 @@ describe 'crudify integration', ->
         body[0].name.should.equal MikeModel.name
         done()
 
-  describe 'POST /users/:id/friends', ->
+  describe 'PUT /users/:id/friends', ->
 
     # Mike already has Tom as a friend so he will be duped in the list
     it 'should add friend to the list', (done) ->
       opt =
-        method: "POST"
+        method: "PUT"
         json:
           _id: String(TomModel._id)
         uri: "http://localhost:#{PORT}/users/#{MikeModel._id}/friends"
@@ -628,6 +628,28 @@ describe 'crudify integration', ->
         body.length.should.equal 2
         body[0]._id.should.equal String TomModel._id
         body[1]._id.should.equal String TomModel._id
+        done()
+
+  describe 'POST /users/:id/friends', ->
+
+    it 'should create a friend and add to the list', (done) ->
+      opt =
+        method: "POST"
+        json:
+          name: "J-Roc"
+          score: 30
+          time: 130
+        uri: "http://localhost:#{PORT}/users/#{MikeModel._id}/friends"
+        
+      request opt, (err, res, body) ->
+        should.not.exist err
+        res.statusCode.should.equal 200
+        should.exist body
+        Array.isArray(body).should.equal true
+        body.length.should.equal 2
+        body[0]._id.should.equal String TomModel._id
+        # should be able to check for name
+        #body[1].name.should.equal 'J-Roc'
         done()
 
   describe 'GET /users/:id/findWithSameName', ->

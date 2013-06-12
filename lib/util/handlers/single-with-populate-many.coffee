@@ -33,7 +33,7 @@ module.exports = (route) ->
 
       Model.create req.body, (err, data) =>
         return sendError res, err if err?
-        nMod[route.meta.field].push String data._id
+        nMod[route.meta.field].push data
         nMod.save (err, resMod) =>
           return sendError res, err if err?
           return sendResult.bind(@) model, req, res, resMod[route.meta.field]

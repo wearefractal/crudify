@@ -648,8 +648,7 @@ describe 'crudify integration', ->
         Array.isArray(body).should.equal true
         body.length.should.equal 2
         body[0]._id.should.equal String TomModel._id
-        # should be able to check for name
-        #body[1].name.should.equal 'J-Roc'
+        body[1].name.should.equal 'J-Roc'
         done()
 
   describe 'GET /users/:id/findWithSameName', ->

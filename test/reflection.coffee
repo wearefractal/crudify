@@ -41,6 +41,7 @@ describe 'crudify reflection/meta info', ->
           should.exist route.methods
         done()
 
+  ###
   describe 'OPTIONS /users', ->
     it 'should return meta information', (done) ->
       opt =
@@ -62,3 +63,5 @@ describe 'crudify reflection/meta info', ->
 
         should.exist body.schema
         done()
+  ###
+  

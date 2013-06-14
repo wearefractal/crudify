@@ -1,6 +1,7 @@
 extendQueryFromParams = require '../extendQueryFromParams'
 sendError = require '../sendError'
 sendResult = require '../sendResult'
+authorizeRead = require '../authorizeRead'
 defaultPerms = require '../defaultPerms'
 execQuery = require '../execQuery'
 filterDocument = require '../filterDocument'
@@ -10,15 +11,17 @@ module.exports = (route) ->
   out = {}
     
   out.get = (model, req, res, next) ->
-    perms = (if Model.authorize then Model.authorize(req) else defaultPerms)
-    return sendError res, "Not authorized", 401 unless perms.read is true
-    query = Model.find()
-    query = extendQueryFromParams query, req.query, route.meta
-    execQuery.bind(@) model, req, res, query, (err, data) =>
-      return sendError res, err if err?
-      return sendError res, "Not found", 404 unless data?
-      nData = (filterDocument(req, doc) for doc in data)
-      return sendResult.bind(@) model, req, res, nData
+    authorizeRead {collection:Model,args:[req]}, (canReadCollection) =>
+      return sendError res, "Not authorized", 401 unless canReadCollection
+      query = Model.find()
+      query = extendQueryFromParams query, req.query, route.meta
+
+      execQuery.bind(@) model, req, res, query, (err, data) =>
+        return sendError res, err if err?
+        return sendError res, "Not found", 404 unless data?
+
+        authorizeRead {models:data,args:[req]}, (_, nData) =>
+          return sendResult.bind(@) model, req, res, nData
 
   out.post = (model, req, res, next) ->
     return sendError res, new Error("Invalid body") unless typeof req.body is 'object'

@@ -1,35 +1,37 @@
 {
-   "name":"crudify",
-   "description":"Mongoose CRUD generator",
-   "version":"0.0.7",
-   "homepage":"http://github.com/wearefractal/crudify",
-   "repository":"git://github.com/wearefractal/crudify.git",
-   "author":"Fractal <contact@wearefractal.com> (http://wearefractal.com/)",
-   "main":"./index.js",
-   
-   "dependencies":{
-      "coffee-script":"*",
-      "require-directory":"*",
-      "async":"*",
-      "hookify":"*",
-      "mongoose":"*"
-   },
-   "devDependencies":{
-      "mocha":"*",
-      "should":"*",
-      "request":"*",
-      "express":"*"
-   },
-   "scripts":{
-      "test":"mocha --compilers coffee:coffee-script"
-   },
-   "engines":{
-      "node":">= 0.4.0"
-   },
-   "licenses":[
-      {
-         "type":"MIT",
-         "url":"http://github.com/wearefractal/crudify/raw/master/LICENSE"
-      }
-   ]
+  "name": "crudify",
+  "description": "Mongoose CRUD generator",
+  "version": "0.0.7",
+  "homepage": "http://github.com/wearefractal/crudify",
+  "repository": "git://github.com/wearefractal/crudify.git",
+  "author": "Fractal <contact@wearefractal.com> (http://wearefractal.com/)",
+  "main": "./index.js",
+  "dependencies": {
+    "coffee-script": "*",
+    "require-directory": "*",
+    "async": "*",
+    "hookify": "*",
+    "mongoose": "*"
+  },
+  "devDependencies": {
+    "mocha": "*",
+    "should": "*",
+    "request": "*",
+    "express": "*",
+    "lodash": "~1.3.1",
+    "seedling": "0.0.2",
+    "Faker": "~0.5.11"
+  },
+  "scripts": {
+    "test": "mocha --compilers coffee:coffee-script"
+  },
+  "engines": {
+    "node": ">= 0.4.0"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://github.com/wearefractal/crudify/raw/master/LICENSE"
+    }
+  ]
 }

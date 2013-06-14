@@ -1,0 +1,64 @@
+Faker = require "Faker"
+db = require "./connection"
+Seedling = require "seedling"
+async = require "async"
+
+seed = module.exports = new Seedling db,
+
+  User: ->
+    create = (score) ->
+      return {
+        name: Faker.Name.findName()
+        score: score
+        time: Math.floor(Math.random()*1000)
+      }
+    create i for i in [1..30]
+
+  Comment: ->
+    create = ->
+      return {
+        user: seed.embed "User"
+        body: Faker.Lorem.paragraph()
+      }
+    create i for i in [1..30]
+
+  
+  Post: ->
+    create = ->
+      random = Math.floor(Math.random()*90)
+      limit = Math.floor(Math.random()+10)
+      return {
+        title: Faker.Lorem.words()
+        body: Faker.Lorem.paragraphs()
+        user: seed.embed "User"
+        comments: seed.collection["Comment"][random..(random+limit)]
+      }
+      create i for i in [1..30]
+
+###
+# Create the best friend for user 
+###
+seed.post "create", (next) ->
+  createBestFriend = (user, cb) ->
+    loop # do/while
+      bestFriend = seed.embed("User")
+      break unless bestFriend._id is user._id
+    user.bestFriend = bestFriend
+    user.friends.push bestFriend._id
+    bestFriend.friends.push user._id
+    user.save (err) -> bestFriend.save cb
+  async.each seed.collection['User'], createBestFriend, next
+
+###
+# Create friends for user 
+###
+seed.post "create", (next) ->
+  createFriends = (user, cb) ->
+    for i in [1..4]
+      loop # do/while
+        friend = seed.embed("User")
+        break unless friend._id in user.friends
+      user.friends.push friend._id
+      friend.friends.push user._id
+    user.save (err) -> friend.save cb
+  async.each seed.collection['User'], createFriends, next

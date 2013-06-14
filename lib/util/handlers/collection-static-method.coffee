@@ -1,6 +1,6 @@
 sendError = require '../sendError'
 sendResult = require '../sendResult'
-defaultPerms = require "../defaultPerms"
+authorizeRead = require "../authorizeRead"
 
 module.exports = (route) ->
   [Model] = route.meta.models
@@ -8,11 +8,11 @@ module.exports = (route) ->
   out = {}
   
   doIt = (model, req, res, next) ->
-    perms = (if Model.authorize then Model.authorize(req) else defaultPerms)
-    return sendError res, "Not authorized", 401 unless perms.read is true
-    Model[handlerName] req, (err, data) =>
-      return sendError res, err if err?
-      sendResult.bind(@) model, req, res, data
+    authorizeRead {collection:Model,args:[req]}, (canReadCollection) =>
+      return sendError res, "Not authorized", 401 unless canReadCollection
+      Model[handlerName] req, (err, data) =>
+        return sendError res, err if err?
+        sendResult.bind(@) model, req, res, data
 
   out.get = doIt
   out.post = doIt

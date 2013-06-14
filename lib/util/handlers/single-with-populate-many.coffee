@@ -6,7 +6,7 @@ filterDocument = require '../filterDocument'
 defaultPerms = require '../defaultPerms'
 execQuery = require '../execQuery'
 getDefault = require '../getDefault'
-{Schema} = require 'mongoose'
+authorizeRead = require '../authorizeRead'
 
 isObjectId = (str) -> str? and (str.length is 12 or str.length is 24)
 
@@ -42,21 +42,24 @@ module.exports = (route) ->
   out.put = (model, req, res, next) ->
     return sendError res, "Invalid body" unless typeof req.body is 'object'
     return sendError res, "Invalid ObjectId" unless isObjectId String req.body._id
-    singleId = req.params[route.meta.primaryKey]
-    query = Model.findById singleId
-    query = extendQueryFromParams query, req.query, route.meta
-    query.populate route.meta.field
+    authorizeRead {collection:Model,args:[req]}, (canReadCollection) =>
+      return sendError res, "Not authorized", 401 unless canReadCollection
 
-    execQuery.bind(@) model, req, res, query, (err, mod) =>
-      return sendError res, err if err?
-      return sendError res, "Not found", 404 unless mod?
-      perms = (if mod.authorize then mod.authorize(req) else defaultPerms)
-      return sendError res, "Not authorized", 401 unless perms.read is true
-      nMod = filterDocument(req, mod)
-      return sendError res, "Not authorized", 401 unless nMod[route.meta.field]?
-      nMod[route.meta.field].push String req.body._id
-      nMod.save (err, resMod) =>
+      singleId = req.params[route.meta.primaryKey]
+      query = Model.findById singleId
+      query = extendQueryFromParams query, req.query, route.meta
+
+      execQuery.bind(@) model, req, res, query, (err, mod) =>
         return sendError res, err if err?
-        return sendResult.bind(@) model, req, res, resMod[route.meta.field]
+        return sendError res, "Not found", 404 unless mod?
+        authorizeRead {model:mod,args:[req]}, (canReadModel, nMod) =>
+          return sendError res, "Not authorized", 401 unless canReadModel
+
+          return sendError res, "Not authorized", 401 unless nMod[route.meta.field]?
+
+          mod[route.meta.field].push String req.body._id
+          mod.save (err, resMod) =>
+            return sendError res, err if err?
+            return sendResult.bind(@) model, req, res, resMod[route.meta.field]
 
   return out

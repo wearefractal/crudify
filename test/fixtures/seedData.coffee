@@ -31,9 +31,8 @@ seed = module.exports = new Seedling db,
         title: Faker.Lorem.words()
         body: Faker.Lorem.paragraphs()
         user: seed.embed "User"
-        comments: seed.collection["Comment"][random..(random+limit)]
       }
-      create i for i in [1..30]
+    create i for i in [1..30]
 
 ###
 # Create the best friend for user 
@@ -62,3 +61,16 @@ seed.post "create", (next) ->
       friend.friends.push user._id
     user.save (err) -> friend.save cb
   async.each seed.collection['User'], createFriends, next
+
+###
+# Create friends for user 
+###
+seed.post "create", (next) ->
+  createComment = (post, cb) ->
+    for i in [1..4]
+      loop # do/while
+        comment = seed.embed("Comment")
+        break unless comment._id in post.comments
+      post.comments.push comment._id
+    post.save cb
+  async.each seed.collection['Post'], createComment, next

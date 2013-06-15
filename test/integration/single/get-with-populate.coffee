@@ -10,8 +10,7 @@ describe "crudify integration", ->
   describe 'GET /users/:id', ->
 
     it 'should return user with populate', (done) ->
-      user = seedData.embed "User"
-      User.populate user, "bestFriend", (err, user) ->
+      User.findOne().populate("bestFriend").exec (err, user) ->
         opt =
           method: "GET"
           json: true

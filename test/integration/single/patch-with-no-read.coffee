@@ -10,20 +10,20 @@ describe "crudify integration", ->
   describe 'PATCH /users/:id', ->
 
     it 'should return error on no read', (done) ->
-      user = seedData.embed "User"
-      opt =
-        method: "PATCH"
-        uri: app.url "/users/#{user._id}"
-        json:
-          score: 9001
-        headers:
-          hasRead: 'false'
+      User.findOne().exec (err, user) ->
+        opt =
+          method: "PATCH"
+          uri: app.url "/users/#{user._id}"
+          json:
+            score: 9001
+          headers:
+            hasRead: 'false'
 
-      request opt, (err, res, body) ->
-        should.not.exist err
-        res.statusCode.should.equal 401
-        should.exist body
-        should.exist body.error
-        should.exist body.error.message
-        body.error.message.should.equal "Not authorized"
-        done()
+        request opt, (err, res, body) ->
+          should.not.exist err
+          res.statusCode.should.equal 401
+          should.exist body
+          should.exist body.error
+          should.exist body.error.message
+          body.error.message.should.equal "Not authorized"
+          done()

@@ -1,5 +1,6 @@
 app = require "../../fixtures/app"
 db = require "../../fixtures/connection"
+Post = db.model "Post"
 Comment = db.model "Comment"
 seedData = require "../../fixtures/seedData"
 request = require "request"
@@ -10,20 +11,20 @@ describe "crudify integration", ->
 
     it 'should add comment to the list', (done) ->
 
-      post = seedData.embed "Post"
+      Post.findOne().exec (err, post) ->
 
-      opt =
-        method: "POST"
-        json:
-          user: seedData.ref "User"
-          body: "Test comment"
-        uri: app.url "/posts/#{post._id}/comments"
-        
-      request opt, (err, res, body) ->
-        should.not.exist err
-        res.statusCode.should.equal 200
-        should.exist body
-        Array.isArray(body).should.equal true
-        body.length.should.equal post.comments.length + 1
-        done()
+        opt =
+          method: "POST"
+          json:
+            user: seedData.ref "User"
+            body: "Test comment"
+          uri: app.url "/posts/#{post._id}/comments"
+          
+        request opt, (err, res, body) ->
+          should.not.exist err
+          res.statusCode.should.equal 200
+          should.exist body
+          Array.isArray(body).should.equal true
+          body.length.should.equal post.comments.length + 1
+          done()
 

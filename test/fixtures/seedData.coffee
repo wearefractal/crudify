@@ -41,10 +41,10 @@ seed.post "create", (next) ->
       bestFriend = seed.embed("User")
       break unless bestFriend._id is user._id
     user.bestFriend = bestFriend
-    user.friends.push bestFriend._id
-    bestFriend.friends.push user._id
+    user.friends.push bestFriend._id unless bestFriend._id in user.friends
+    bestFriend.friends.push user._id unless user._id in bestFriend.friends
     user.save (err) -> bestFriend.save cb
-  async.each seed.collection['User'], createBestFriend, next
+  async.eachSeries seed.collection['User'], createBestFriend, next
 
 ###
 # Create friends for user 
@@ -54,11 +54,11 @@ seed.post "create", (next) ->
     for i in [1..4]
       loop # do/while
         friend = seed.embed("User")
-        break unless friend._id in user.friends
-      user.friends.push friend._id
-      friend.friends.push user._id
+        break unless friend._id is user._id or friend._id in user.friends
+      user.friends.push friend._id unless friend._id in user.friends
+      friend.friends.push user._id unless user._id in friend.friends
     user.save (err) -> friend.save cb
-  async.each seed.collection['User'], createFriends, next
+  async.eachSeries seed.collection['User'], createFriends, next
 
 ###
 # Create friends for user 
@@ -71,4 +71,4 @@ seed.post "create", (next) ->
         break unless comment._id in post.comments
       post.comments.push comment._id
     post.save cb
-  async.each seed.collection['Post'], createComment, next
+  async.eachSeries seed.collection['Post'], createComment, next

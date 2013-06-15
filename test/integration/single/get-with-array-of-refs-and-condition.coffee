@@ -9,8 +9,7 @@ describe "crudify integration", ->
   describe 'GET /users/:id/friends', ->
 
     it 'should return populated friends list with where condition that validates', (done) ->
-      user = seedData.embed "User"
-      User.populate user, "friends", (err, user) ->
+      User.findOne().populate('friends').exec (err, user) ->
         random = Math.floor(Math.random()*user.friends.length)
         friend = user.friends[random]
 
@@ -29,8 +28,7 @@ describe "crudify integration", ->
           done()
 
     it 'should return populated friends list with where condition', (done) ->
-      user = seedData.embed "User"
-      User.populate user, "friends", (err, user) ->
+      User.findOne().populate('friends').exec (err, user) ->
         random = Math.floor(Math.random()*user.friends.length)
         friend = user.friends[random]
 

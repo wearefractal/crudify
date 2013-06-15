@@ -50,9 +50,7 @@ beforeEach (done) ->
   server.listen PORT, -> seedData.create done
 
 afterEach (done) ->
-  server.close ->
-    setTimeout ->
-      db.wipe(done)
-    , 200
+  db.wipe ->
+    server.close done
 
 

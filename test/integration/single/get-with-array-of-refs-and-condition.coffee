@@ -8,9 +8,6 @@ should = require "should"
 describe "crudify integration", ->
   describe 'GET /users/:id/friends', ->
 
-    beforeEach (done) -> app.start -> seedData.create done
-    afterEach (done) -> app.close -> seedData.clear done
-
     it 'should return populated friends list with where condition that validates', (done) ->
       user = seedData.embed "User"
       User.populate user, "friends", (err, user) ->

@@ -3,6 +3,7 @@ should = require 'should'
 http = require 'http'
 express = require 'express'
 request = require 'request'
+seedData = require "./seedData"
 require 'mocha'
 
 db = require './connection'
@@ -45,8 +46,10 @@ PORT = process.env.PORT or 9001
 
 module.exports.url = (url) -> "http://localhost:#{PORT}#{url}"
 
-module.exports.close = (done) ->
-  server.close()
-  done()
+beforeEach (done) ->
+  server.listen PORT, -> seedData.create done
 
-module.exports.start = (done) -> server.listen PORT, done
+afterEach (done) ->
+  server.close -> db.wipe done
+
+

@@ -6,10 +6,7 @@ request = require "request"
 should = require "should"
 
 describe "crudify integration", ->
-  describe 'PUT /posts/:id/comments', ->
-
-    beforeEach (done) -> app.start -> seedData.create done
-    afterEach (done) -> app.close -> seedData.clear done
+  describe 'GET /users/:id/findWithSameName', ->
 
     it 'should return user', (done) ->
       user = seedData.embed "User"

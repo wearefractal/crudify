@@ -25,8 +25,6 @@ seed = module.exports = new Seedling db,
   
   Post: ->
     create = ->
-      random = Math.floor(Math.random()*90)
-      limit = Math.floor(Math.random()+10)
       return {
         title: Faker.Lorem.words()
         body: Faker.Lorem.paragraphs()

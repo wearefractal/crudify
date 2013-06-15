@@ -6,10 +6,6 @@ request = require "request"
 should = require "should"
 
 describe "crudify integration", ->
-
-  beforeEach (done) -> app.start -> seedData.create done
-  afterEach (done) -> app.close -> seedData.clear done
-
   describe 'PUT /users/:id', ->
 
     it 'should return error on no read', (done) ->

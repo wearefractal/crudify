@@ -5,9 +5,6 @@ should = require "should"
 
 describe "crudify integration", ->
 
-  beforeEach (done) -> app.start -> seedData.create done
-  afterEach (done) -> app.close -> seedData.clear done
-
   describe 'POST /users', ->
     
     it 'have a validation error if name is blank', (done) ->

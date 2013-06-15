@@ -43,7 +43,7 @@ seed.post "create", (next) ->
     user.bestFriend = bestFriend
     user.friends.push bestFriend._id
     bestFriend.friends.push user._id
-    user.save (err) -> bestFriend.save -> cb()
+    user.save (err) -> bestFriend.save cb
   async.each seed.collection['User'], createBestFriend, next
 
 ###
@@ -57,7 +57,7 @@ seed.post "create", (next) ->
         break unless friend._id in user.friends
       user.friends.push friend._id
       friend.friends.push user._id
-    user.save (err) -> friend.save -> cb()
+    user.save (err) -> friend.save cb
   async.each seed.collection['User'], createFriends, next
 
 ###
@@ -70,5 +70,5 @@ seed.post "create", (next) ->
         comment = seed.embed("Comment")
         break unless comment._id in post.comments
       post.comments.push comment._id
-    post.save -> cb()
+    post.save cb
   async.each seed.collection['Post'], createComment, next

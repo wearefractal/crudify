@@ -51,7 +51,6 @@ beforeEach (done) ->
 
 afterEach (done) ->
   db.wipe ->
-    server.close()
-    setTimeout done, 100
+    server.close done
 
 

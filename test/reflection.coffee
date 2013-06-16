@@ -9,7 +9,7 @@ User = db.model 'User'
 crud = crudify db
 userMod = crud.expose 'User'
 
-PORT = process.env.PORT or 9090
+PORT = process.env.PORT or 9002
 
 app = express()
 app.use express.bodyParser()

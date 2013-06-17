@@ -1,11 +1,11 @@
-crudify = require '../'
+crudify = require '../../'
 should = require 'should'
 express = require 'express'
 request = require 'request'
 require 'mocha'
 
 {Schema} = require 'mongoose'
-db = require './fixtures/connection'
+db = require '../fixtures/connection'
 
 fakeReq = {}
 
@@ -17,7 +17,7 @@ generateKey = (len=16) ->
   key += chars[rn(chars.length)] for i in [1..len]
   return key
 
-describe 'authorizeRead', ->
+describe 'authorize read', ->
 
   it 'should pass with no authorize', (done) ->
 

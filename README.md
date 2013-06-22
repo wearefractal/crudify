@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/wearefractal/crudify.png?branch=master)](https://travis-ci.org/wearefractal/crudify)
 
-This documentation is horrible. Wait until 1.0 for a full overview.
+Updated documentation coming soon.
 
 ## Information
 

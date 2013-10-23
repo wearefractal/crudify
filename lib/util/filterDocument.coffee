@@ -2,11 +2,9 @@ getAllPaths = require './getAllPaths'
 async = require 'async'
 
 module.exports = (req, mod) ->
-  out = mod.toJSON()
-
-  for k in getAllPaths(mod) when mod.schema.paths[k].authorize?
-    toCall = mod.schema.paths[k].authorize.bind mod
+  for k in getAllPaths(mod) when mod.schema.paths[k].options.authorize?
+    toCall = mod.schema.paths[k].options.authorize.bind mod
     perms = toCall req
-    delete out[k] unless perms.read is true
+    mod.set k, undefined unless perms.read is true
 
   return mod

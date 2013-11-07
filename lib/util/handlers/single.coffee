@@ -41,8 +41,8 @@ module.exports = (route) ->
       return sendError res, "Not authorized", 401 unless perms.write is true
       
       for k in getAllPaths Model
-        if mod.schema.paths[k].options?.authorize?
-          toCall = mod.schema.paths[k].options.authorize.bind mod
+        if mod.schema.tree[k]?.authorize?
+          toCall = mod.schema.tree[k].authorize.bind mod
           perms = toCall req
           if req.body[k]? # they explicitly tried to PUT a change on a non-writable field
             return sendError res, "Not authorized", 401 unless perms.read is true
@@ -71,7 +71,7 @@ module.exports = (route) ->
       perms = (if mod.authorize then mod.authorize(req) else defaultPerms)
       return sendError res, "Not authorized", 401 unless perms.read is true
       return sendError res, "Not authorized", 401 unless perms.write is true
-      
+
       for k,v of req.body when (k in getAllPaths(Model))
         if mod.schema.paths[k].options?.authorize?
           toCall = mod.schema.paths[k].options.authorize.bind mod

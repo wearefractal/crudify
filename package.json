@@ -1,7 +1,7 @@
 {
   "name": "crudify",
   "description": "Mongoose CRUD generator",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "homepage": "http://github.com/wearefractal/crudify",
   "repository": "git://github.com/wearefractal/crudify.git",
   "author": "Fractal <contact@wearefractal.com> (http://wearefractal.com/)",

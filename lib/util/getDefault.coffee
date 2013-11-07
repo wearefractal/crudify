@@ -1,5 +1,5 @@
 module.exports = (model, field) ->
-  def = model.schema.paths[field].defaultValue
+  def = model.schema.tree[field].default
   return unless def?
 
   if typeof def is 'function'
